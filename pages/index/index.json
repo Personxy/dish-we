@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "点餐小程序",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#007AFF",
+  "backgroundTextStyle": "light",
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
+} 

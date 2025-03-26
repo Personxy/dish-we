@@ -1,0 +1,90 @@
+<view class="manage-container">
+  <!-- 顶部导航栏 -->
+  <view class="tab-bar">
+    <view class="tab {{currentTab === 'category' ? 'active' : ''}}" bindtap="switchTab" data-tab="category">分类管理</view>
+    <view class="tab {{currentTab === 'dish' ? 'active' : ''}}" bindtap="switchTab" data-tab="dish">菜品管理</view>
+  </view>
+  
+  <!-- 分类管理 -->
+  <view class="category-manage" wx:if="{{currentTab === 'category'}}">
+    <view class="manage-header">
+      <view class="title">分类列表</view>
+      <view class="btn btn-primary" bindtap="showAddCategory">添加分类</view>
+    </view>
+    
+    <view class="category-list" wx:if="{{categories.length > 0}}">
+      <view class="category-item" wx:for="{{categories}}" wx:key="id">
+        <view class="category-info">
+          <view class="category-name">{{item.name}}</view>
+          <view class="category-count">{{item.dishCount || 0}}个菜品</view>
+        </view>
+        <view class="category-actions">
+          <view class="action-btn edit" bindtap="editCategory" data-category="{{item}}">编辑</view>
+          <view class="action-btn delete" bindtap="deleteCategory" data-id="{{item.id}}">删除</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:else>
+      <image class="empty-icon" src="/images/empty-category.png" mode="aspectFit"></image>
+      <text>暂无分类</text>
+    </view>
+  </view>
+  
+  <!-- 菜品管理 -->
+  <view class="dish-manage" wx:if="{{currentTab === 'dish'}}">
+    <view class="manage-header">
+      <view class="filter-wrap">
+        <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categoryNames}}">
+          <view class="filter-picker">
+            <text>{{categoryNames[categoryIndex] || '全部分类'}}</text>
+            <image class="down-icon" src="/images/down.png" mode="aspectFit"></image>
+          </view>
+        </picker>
+      </view>
+      <view class="btn btn-primary" bindtap="addDish">添加菜品</view>
+    </view>
+    
+    <view class="dish-list" wx:if="{{filteredDishes.length > 0}}">
+      <view class="dish-item" wx:for="{{filteredDishes}}" wx:key="id">
+        <image class="dish-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="dish-info">
+          <view class="dish-name">{{item.name}}</view>
+          <view class="dish-category">{{getCategoryName(item.categoryId)}}</view>
+          <view class="dish-price">¥{{item.price}}</view>
+        </view>
+        <view class="dish-actions">
+          <view class="action-btn edit" bindtap="editDish" data-dish="{{item}}">编辑</view>
+          <view class="action-btn delete" bindtap="deleteDish" data-id="{{item.id}}">删除</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:else>
+      <image class="empty-icon" src="/images/empty-dish.png" mode="aspectFit"></image>
+      <text>暂无菜品</text>
+    </view>
+  </view>
+  
+  <!-- 添加/编辑分类弹窗 -->
+  <view class="modal" wx:if="{{showCategoryModal}}">
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">{{isEditingCategory ? '编辑分类' : '添加分类'}}</text>
+        <view class="modal-close" bindtap="closeCategoryModal">×</view>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <view class="form-label">分类名称</view>
+          <input class="form-input" placeholder="请输入分类名称" value="{{categoryForm.name}}" bindinput="onCategoryNameInput"/>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="btn btn-outline" bindtap="closeCategoryModal">取消</view>
+        <view class="btn btn-primary" bindtap="saveCategory">确定</view>
+      </view>
+    </view>
+  </view>
+</view> 

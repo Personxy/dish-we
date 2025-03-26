@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/order/order",
+    "pages/cart/cart",
+    "pages/myOrder/myOrder",
+    "pages/dishManage/dishManage",
+    "pages/dishEdit/dishEdit"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#007AFF",
+    "navigationBarTitleText": "点餐小程序",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#8a8a8a",
+    "selectedColor": "#007AFF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home_selected.png"
+      },
+      {
+        "pagePath": "pages/order/order",
+        "text": "开选!",
+        "iconPath": "images/order.png",
+        "selectedIconPath": "images/order_selected.png"
+      },
+      {
+        "pagePath": "pages/myOrder/myOrder",
+        "text": "还没吃",
+        "iconPath": "images/my_order.png",
+        "selectedIconPath": "images/my_order_selected.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+} 

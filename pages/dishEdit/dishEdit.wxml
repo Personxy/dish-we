@@ -1,0 +1,62 @@
+<view class="dish-edit-container">
+  <view class="form-container">
+    <!-- 基本信息部分 -->
+    <view class="form-section">
+      <view class="section-title">基本信息</view>
+      
+      <!-- 菜品图片 -->
+      <view class="form-item">
+        <view class="form-label">菜品图片</view>
+        <view class="image-uploader" bindtap="chooseImage">
+          <image wx:if="{{tempImagePath}}" class="dish-image" src="{{tempImagePath}}" mode="aspectFill"></image>
+          <view wx:else class="upload-placeholder">
+            <image class="upload-icon" src="/images/upload.png" mode="aspectFit"></image>
+            <text>点击上传</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 菜品名称 -->
+      <view class="form-item">
+        <view class="form-label">菜品名称</view>
+        <input class="form-input" type="text" placeholder="请输入菜品名称" value="{{dishForm.name}}" bindinput="onNameInput"/>
+      </view>
+      
+      <!-- 菜品分类 -->
+      <view class="form-item">
+        <view class="form-label">菜品分类</view>
+        <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categoryNames}}">
+          <view class="form-picker">
+            <text>{{categoryNames[categoryIndex] || '请选择分类'}}</text>
+            <image class="down-icon" src="/images/down.png" mode="aspectFit"></image>
+          </view>
+        </picker>
+      </view>
+      
+      <!-- 菜品价格 -->
+      <view class="form-item">
+        <view class="form-label">菜品价格</view>
+        <view class="price-input-wrapper">
+          <text class="price-symbol">¥</text>
+          <input class="form-input price-input" type="digit" placeholder="0.00" value="{{dishForm.price}}" bindinput="onPriceInput"/>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 菜品描述部分 -->
+    <view class="form-section">
+      <view class="section-title">菜品描述</view>
+      
+      <view class="form-item">
+        <textarea class="form-textarea" placeholder="请输入菜品描述" value="{{dishForm.description}}" bindinput="onDescriptionInput" maxlength="200"></textarea>
+        <view class="textarea-counter">{{descriptionLength}}/200</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部按钮 -->
+  <view class="bottom-btns">
+    <view class="btn btn-outline" bindtap="cancel">取消</view>
+    <view class="btn btn-primary" bindtap="saveDish">保存</view>
+  </view>
+</view> 
