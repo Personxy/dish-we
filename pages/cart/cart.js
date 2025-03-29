@@ -292,7 +292,7 @@ Page({
         success: () => {
           // 跳转到订单页
           setTimeout(() => {
-            wx.navigateTo({
+            wx.switchTab({
               url: '/pages/myOrder/myOrder'
             })
           }, 1500)

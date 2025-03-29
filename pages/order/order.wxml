@@ -66,10 +66,10 @@
         <image class="cart-icon" src="/images/cart.png" mode="aspectFit"></image>
         <view class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
       </view>
-      <view class="cart-price">
+      <!-- <view class="cart-price">
         <text>合计: </text>
         <text class="price">¥{{totalPrice}}</text>
-      </view>
+      </view> -->
     </view>
     <view class="checkout-btn {{cartCount > 0 ? 'btn-active' : ''}}" bindtap="checkout">
       去结算 ({{cartCount}})

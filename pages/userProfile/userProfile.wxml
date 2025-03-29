@@ -1,0 +1,37 @@
+<view class="profile-container">
+  <view class="profile-header">
+    <view class="profile-title">完善个人信息</view>
+    <view class="profile-subtitle">请设置您的头像和昵称</view>
+  </view>
+  
+  <view class="profile-form">
+    <view class="avatar-section">
+      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{avatarUrl}}"></image>
+      </button>
+      <text class="avatar-tip">点击更换头像</text>
+    </view>
+    
+    <view class="nickname-section">
+      <view class="input-label">昵称</view>
+      <input 
+        type="nickname" 
+        class="nickname-input" 
+        placeholder="请输入昵称" 
+        value="{{username}}"
+        bindinput="onNicknameChange"
+      />
+    </view>
+  </view>
+  
+  <view class="submit-section">
+    <button 
+      class="submit-btn" 
+      bindtap="submitUserInfo" 
+      loading="{{isSubmitting}}" 
+      disabled="{{isSubmitting}}"
+    >
+      确认
+    </button>
+  </view>
+</view>

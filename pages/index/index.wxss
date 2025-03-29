@@ -168,8 +168,6 @@
   display: block;
 }
 
-
-
 /* 公告区域 */
 .notice-section {
   padding: 24rpx;
@@ -253,4 +251,53 @@
 .dish-detail-action {
   display: flex;
   justify-content: center;
-} 
+}
+
+/* 添加加载样式 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #fff;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 添加右箭头样式 */
+.user-info-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.arrow-right {
+  position: absolute;
+  right: 20rpx;
+  display: flex;
+  align-items: center;
+}
+
+.arrow-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+.arrow-text {
+  font-size: 36rpx;
+  color: #999;
+}

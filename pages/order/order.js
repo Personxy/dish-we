@@ -12,7 +12,7 @@ Page({
     currentPage: 1,
     hasMore: true,
     cartCount: 0,
-    totalPrice: 0,
+    // totalPrice: 0,
     showDishDetail: false,
     currentDish: {},
     currentDishCount: 1,
@@ -228,12 +228,12 @@ Page({
   // 更新购物车信息（数量和总价）
   updateCartInfo: function () {
     const cartItems = app.globalData.cartItems;
-    let count = 0;
+
     let total = 0;
 
     this.setData({
-      cartCount: count,
-      totalPrice: total.toFixed(2),
+      cartCount: cartItems.length,
+      // totalPrice: total.toFixed(2),
     });
   },
 

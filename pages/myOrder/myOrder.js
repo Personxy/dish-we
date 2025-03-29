@@ -138,7 +138,7 @@ Page({
     
     wx.showModal({
       title: '提示',
-      content: '确定删除该订单？',
+      content: '确定删除该计划？',
       success: (res) => {
         if (res.confirm) {
           // 从本地存储中删除订单
@@ -169,7 +169,7 @@ Page({
     
     wx.showModal({
       title: '提示',
-      content: '确定取消该订单？',
+      content: '确定取消该计划？',
       success: (res) => {
         if (res.confirm) {
           // 从本地存储中更新订单状态
@@ -189,7 +189,7 @@ Page({
             this.applyFilter()
             
             wx.showToast({
-              title: '订单已取消',
+              title: '计划已取消',
               icon: 'success'
             })
           }
@@ -221,7 +221,7 @@ Page({
     
     wx.showModal({
       title: '提示',
-      content: '确定取消该订单？',
+      content: '确定取消该计划？',
       success: (res) => {
         if (res.confirm) {
           // 从本地存储中更新订单状态
@@ -246,7 +246,7 @@ Page({
             this.applyFilter()
             
             wx.showToast({
-              title: '订单已取消',
+              title: '计划已取消',
               icon: 'success'
             })
           }

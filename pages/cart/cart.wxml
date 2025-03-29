@@ -26,14 +26,14 @@
     <!-- 空购物车状态 -->
     <view class="empty-cart" wx:else>
       <image class="empty-cart-image" src="/images/empty-cart.png" mode="aspectFit"></image>
-      <view class="empty-cart-text">购物车是空的</view>
-      <view class="btn btn-primary go-order-btn" bindtap="goToOrder">去点餐</view>
+      <view class="empty-cart-text">计划是空的</view>
+      <view class="btn btn-primary go-order-btn" bindtap="goToOrder">去添加</view>
     </view>
   </view>
   
   <!-- 订单信息 -->
   <view class="order-info-section" wx:if="{{cartItems.length > 0}}">
-    <view class="section-title">订单信息</view>
+    <view class="section-title">餐食计划信息</view>
     
     <!-- 预约时间选择 -->
     <view class="info-item">
@@ -87,6 +87,6 @@
       <text>合计: </text>
       <text class="total-price">¥{{totalAmount}}</text>
     </view>
-    <view class="submit-btn" bindtap="submitOrder">提交订单</view>
+    <view class="submit-btn" bindtap="submitOrder">提交计划</view>
   </view>
 </view> 

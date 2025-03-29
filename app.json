@@ -5,12 +5,13 @@
     "pages/cart/cart",
     "pages/myOrder/myOrder",
     "pages/dishManage/dishManage",
-    "pages/dishEdit/dishEdit"
+    "pages/dishEdit/dishEdit",
+    "pages/userProfile/userProfile"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#007AFF",
-    "navigationBarTitleText": "点餐小程序",
+    "navigationBarTitleText": "静静今天吃什么",
     "navigationBarTextStyle": "white"
   },
   "tabBar": {
@@ -41,4 +42,4 @@
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"
-} 
+}

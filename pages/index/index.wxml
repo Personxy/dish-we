@@ -1,14 +1,16 @@
-<view class="container">
+<view class="container" wx:if="{{!pageLoading}}">
   <!-- 用户信息区域 -->
-  <view class="user-info-card">
+  <view class="user-info-card" bindtap="navigateToUserProfile">
     <view class="user-avatar-container">
-      <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <image class="user-avatar" src="{{userInfo.avatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
     </view>
     <view class="user-detail">
-      <view class="user-nickname">{{userInfo.nickName || '游客'}}</view>
-      <view class="user-welcome">静静今天吃什么</view>
+      <view class="user-nickname">{{userInfo.username || '游客'}}</view>
+      <!-- <view class="user-welcome">静静今天吃什么</view> -->
     </view>
-    <button wx:if="{{!hasUserInfo && canIUseGetUserProfile}}" class="authorize-btn" bindtap="getUserProfile">授权登录</button>
+    <view class="arrow-right">
+       <text class="arrow-text">></text>
+    </view>
   </view>
   
   <!-- 功能入口区域 -->
@@ -19,12 +21,12 @@
     </view>
     <view class="feature-item" bindtap="navigateToCart">
       <image class="feature-icon" src="/images/cart.png" mode="aspectFit"></image>
-      <text class="feature-name">购物车</text>
+      <text class="feature-name">餐食计划</text>
       <view class="badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
     </view>
     <view class="feature-item" bindtap="navigateToMyOrder">
       <image class="feature-icon" src="/images/order.png" mode="aspectFit"></image>
-      <text class="feature-name">我的订单</text>
+      <text class="feature-name">我的计划</text>
     </view>
     <view class="feature-item" bindtap="navigateToDishManage" wx:if="{{isAdmin}}">
       <image class="feature-icon" src="/images/manage.png" mode="aspectFit"></image>
@@ -77,3 +79,11 @@
     </view>
   </view>
 </view> 
+
+<!-- 加载中状态 -->
+<view class="loading-container" wx:else>
+  <view class="loading">
+    <image class="loading-icon" src="/images/loading.gif"></image>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>
