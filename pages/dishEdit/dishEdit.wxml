@@ -34,13 +34,13 @@
       </view>
       
       <!-- 菜品价格 -->
-      <view class="form-item">
+      <!-- <view class="form-item">
         <view class="form-label">菜品价格</view>
         <view class="price-input-wrapper">
           <text class="price-symbol">¥</text>
           <input class="form-input price-input" type="digit" placeholder="0.00" value="{{dishForm.price}}" bindinput="onPriceInput"/>
         </view>
-      </view>
+      </view> -->
     </view>
     
     <!-- 菜品描述部分 -->
