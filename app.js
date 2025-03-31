@@ -33,7 +33,7 @@ App({
     }
 
     // 加载菜品分类和菜品数据
-    this.loadCategoriesAndDishes();
+   
   },
 
   // 微信登录
@@ -106,25 +106,7 @@ App({
       });
   },
 
-  // 加载菜品分类和菜品数据
-  loadCategoriesAndDishes: function () {
-    // 这里应该通过API获取数据
-    // 示例数据
-    this.globalData.categories = [
-      { id: 1, name: "热菜" },
-      { id: 2, name: "凉菜" },
-      { id: 3, name: "主食" },
-      { id: 4, name: "饮品" },
-    ];
 
-    this.globalData.dishes = [
-      { id: 1, categoryId: 1, name: "宫保鸡丁", image: "/images/dish1.png", description: "香辣可口的经典川菜" },
-      { id: 2, categoryId: 1, name: "鱼香肉丝", image: "/images/dish2.png", description: "传统川菜，咸甜适中" },
-      { id: 3, categoryId: 2, name: "凉拌黄瓜", image: "/images/dish3.png", description: "清爽可口的开胃菜" },
-      { id: 4, categoryId: 3, name: "蛋炒饭", image: "/images/dish4.png", description: "香喷喷的家常炒饭" },
-      { id: 5, categoryId: 4, name: "柠檬茶", image: "/images/dish5.png", description: "清新解腻的饮品" },
-    ];
-  },
 
   // 添加商品到购物车
   addToCart: function (dish) {
@@ -149,15 +131,15 @@ App({
     }
   },
 
-  // 计算购物车总价
-  calculateTotal: function () {
-    let total = 0;
-    let cartItems = this.globalData.cartItems;
+  // // 计算购物车总价
+  // calculateTotal: function () {
+  //   let total = 0;
+  //   let cartItems = this.globalData.cartItems;
 
-    cartItems.forEach((item) => {
-      total += item.count;
-    });
+  //   cartItems.forEach((item) => {
+  //     total += item.count;
+  //   });
 
-    return total;
-  },
+  //   return total;
+  // },
 });

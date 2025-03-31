@@ -36,14 +36,69 @@ Page({
         title: "编辑菜品",
       });
 
-      // 加载菜品数据
-      // this.loadDishData(options.id)
+      // 如果有传递的菜品数据，直接使用
+      if (options.dishData) {
+        try {
+          const dishData = JSON.parse(decodeURIComponent(options.dishData));
+          this.setDishData(dishData);
+        } catch (error) {
+          console.error("解析菜品数据失败", error);
+          wx.showToast({
+            title: "获取菜品数据失败",
+            icon: "none",
+            success: () => {
+              setTimeout(() => {
+                wx.navigateBack();
+              }, 1500);
+            },
+          });
+        }
+      } else {
+        // 如果没有传递菜品数据，则尝试从全局数据中获取
+        const globalDishes = app.globalData.dishes || [];
+        const dish = globalDishes.find((d) => d._id === options.id || d.id === options.id);
+
+        if (dish) {
+          this.setDishData(dish);
+        } else {
+          wx.showToast({
+            title: "获取菜品数据失败",
+            icon: "none",
+            success: () => {
+              setTimeout(() => {
+                wx.navigateBack();
+              }, 1500);
+            },
+          });
+        }
+      }
     } else {
       // 设置页面标题为"添加菜品"
       wx.setNavigationBarTitle({
         title: "添加菜品",
       });
     }
+  },
+
+  // 设置菜品数据到表单
+  setDishData: function (dish) {
+    // 获取分类索引
+    const categories = this.data.categories || [];
+    const category = categories.find((c) => c._id === dish.category || c._id === dish.categoryId);
+    const categoryIndex = category ? this.data.categoryNames.indexOf(category.name) : 0;
+
+    this.setData({
+      tempImagePath: dish.image.url || "", // 确保设置了 tempImagePath
+      categoryIndex: categoryIndex > -1 ? categoryIndex : 0,
+      descriptionLength: dish.description ? dish.description.length : 0,
+      dishForm: {
+        name: dish.name || "",
+        categoryId: dish.category || dish.categoryId || "", // 兼容两种字段名
+        price: dish.price || "",
+        image: dish.image || "",
+        description: dish.description || "",
+      },
+    });
   },
 
   // 加载分类数据
@@ -107,78 +162,6 @@ Page({
       });
   },
 
-  // 加载菜品数据
-  loadDishData: function (dishId) {
-    // 显示加载提示
-    wx.showLoading({
-      title: "加载中...",
-    });
-
-    // 使用API获取菜品详情
-    dishes
-      .getDishDetail(dishId)
-      .then((res) => {
-        wx.hideLoading();
-
-        if (res.success) {
-          const dish = res.data;
-
-          if (!dish) {
-            wx.showToast({
-              title: "菜品不存在",
-              icon: "none",
-              success: () => {
-                setTimeout(() => {
-                  wx.navigateBack();
-                }, 1500);
-              },
-            });
-            return;
-          }
-
-          // 获取分类索引
-          const categories = this.data.categoryNames || [];
-          const category = this.data.categories.find((c) => c._id === dish.category);
-          const categoryIndex = category ? this.data.categoryNames.indexOf(category.name) : 0;
-
-          this.setData({
-            tempImagePath: dish.image,
-            categoryIndex: categoryIndex > -1 ? categoryIndex : 0,
-            descriptionLength: dish.description ? dish.description.length : 0,
-            dishForm: {
-              name: dish.name,
-              categoryId: dish.category, // 使用 category 字段
-              price: dish.price,
-              image: dish.image,
-              description: dish.description,
-            },
-          });
-        } else {
-          wx.showToast({
-            title: "获取菜品失败",
-            icon: "none",
-            success: () => {
-              setTimeout(() => {
-                wx.navigateBack();
-              }, 1500);
-            },
-          });
-        }
-      })
-      .catch((err) => {
-        wx.hideLoading();
-        wx.showToast({
-          title: "获取菜品失败",
-          icon: "none",
-          success: () => {
-            setTimeout(() => {
-              wx.navigateBack();
-            }, 1500);
-          },
-        });
-      });
-  },
-
   // 选择图片
   chooseImage: function () {
     wx.chooseMedia({
@@ -187,7 +170,7 @@ Page({
       sourceType: ["album", "camera"],
       success: (res) => {
         // 获取选中图片的临时路径
-        console.log(res)
+        console.log(res);
         const tempFilePath = res.tempFiles[0].tempFilePath;
 
         this.setData({
@@ -199,7 +182,7 @@ Page({
         // 选择图片后立即上传
         this.uploadDishImage(tempFilePath)
           .then((fileUrl) => {
-            console.log(fileUrl,"url")
+            console.log(fileUrl, "url");
             this.setData({
               "dishForm.image": fileUrl,
               isUploading: false,
@@ -342,13 +325,13 @@ Page({
           try {
             const data = JSON.parse(res.data);
             if (data.success) {
-              console.log(data)
+              console.log(data);
               resolve(data.data.image.url);
             } else {
               reject(new Error(data.error?.message || "上传失败"));
             }
           } catch (e) {
-            console.log(e)
+            console.log(e);
             reject(new Error("解析响应失败"));
           }
         },
@@ -360,7 +343,7 @@ Page({
     });
   },
 
-  // 保存菜品
+  // 修改保存菜品方法
   saveDish: function () {
     const { dishForm, isEditing, dishId, isUploading } = this.data;
 
@@ -386,13 +369,10 @@ Page({
     // 准备提交的数据
     const dishData = {
       name: dishForm.name,
-      category: dishForm.categoryId, // 注意：后端使用 category 字段
+      category: dishForm.categoryId, // 使用 category 字段
       price: parseFloat(dishForm.price),
       description: dishForm.description,
-      image:{
-        url:dishForm.image,
-        filename:dishForm.image
-      } , // 已上传的图片URL
+      image: dishForm.image, // 已上传的图片URL
     };
 
     // 根据是否编辑模式调用不同的API

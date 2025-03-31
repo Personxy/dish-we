@@ -396,9 +396,12 @@ Page({
   editDish: function (e) {
     const dish = e.currentTarget.dataset.dish;
 
+    // 将完整的菜品数据转为 JSON 字符串传递
+    const dishData = JSON.stringify(dish);
+    
     // 跳转到菜品编辑页面，并传递菜品数据
     wx.navigateTo({
-      url: `/pages/dishEdit/dishEdit?id=${dish.id}`,
+      url: `/pages/dishEdit/dishEdit?id=${dish.id}&dishData=${encodeURIComponent(dishData)}`,
     });
   },
 

@@ -37,7 +37,7 @@
             <image class="dish-image" src="{{item.image}}" mode="aspectFill"></image>
             <view class="dish-info">
               <text class="dish-name text-ellipsis">{{item.name}}</text>
-              <text class="dish-price">¥{{item.price}}</text>
+              <!-- <text class="dish-price">¥{{item.price}}</text> -->
             </view>
             <view class="dish-action" catchtap="addToCart" data-dish="{{item}}">
               <image class="add-icon" src="/images/add.png" mode="aspectFit"></image>
@@ -84,7 +84,7 @@
       <view class="dish-detail-info">
         <view class="dish-detail-name">{{currentDish.name}}</view>
         <view class="dish-detail-desc">{{currentDish.description}}</view>
-        <view class="dish-detail-price">¥{{currentDish.price}}</view>
+        <!-- <view class="dish-detail-price">¥{{currentDish.price}}</view> -->
         <view class="dish-detail-action">
           <view class="counter">
             <view class="counter-btn minus {{currentDishCount > 0 ? 'active' : ''}}" catchtap="decreaseDishCount">-</view>

@@ -3,8 +3,8 @@
   <view class="cart-list">
     <view wx:if="{{cartItems.length > 0}}">
       <view class="cart-header">
-        <text class="cart-title">已选商品</text>
-        <view class="cart-clear" bindtap="clearCart">清空购物车</view>
+        <text class="cart-title">已选菜品</text>
+        <view class="cart-clear" bindtap="clearCart">清空计划</view>
       </view>
       
       <view class="cart-items">
@@ -12,7 +12,7 @@
           <image class="cart-item-image" src="{{item.image}}" mode="aspectFill"></image>
           <view class="cart-item-info">
             <view class="cart-item-name">{{item.name}}</view>
-            <view class="cart-item-price">¥{{item.price}}</view>
+            <!-- <view class="cart-item-price">¥{{item.price}}</view> -->
           </view>
           <view class="cart-item-counter">
             <view class="counter-btn minus {{item.count > 1 ? 'active' : ''}}" catchtap="decreaseItemCount" data-id="{{item.id}}">-</view>
@@ -40,7 +40,7 @@
       <view class="info-label">预约时间</view>
       <picker mode="multiSelector" bindchange="onTimeChange" bindcolumnchange="onTimeColumnChange" value="{{timeIndex}}" range="{{timeArray}}">
         <view class="time-picker">
-          <text>{{selectedTime || '立即取餐'}}</text>
+          <text>{{selectedTime || '立即烹饪'}}</text>
           <image class="arrow-icon" src="/images/arrow-right.png" mode="aspectFit"></image>
         </view>
       </picker>
@@ -57,7 +57,7 @@
   </view>
   
   <!-- 价格详情 -->
-  <view class="price-detail-section" wx:if="{{cartItems.length > 0}}">
+  <!-- <view class="price-detail-section" wx:if="{{cartItems.length > 0}}">
     <view class="section-title">价格详情</view>
     
     <view class="price-item">
@@ -79,13 +79,13 @@
       <text>合计</text>
       <text class="total-price">¥{{totalAmount}}</text>
     </view>
-  </view>
+  </view> -->
   
   <!-- 底部结算栏 -->
   <view class="bottom-bar" wx:if="{{cartItems.length > 0}}">
     <view class="total-info">
-      <text>合计: </text>
-      <text class="total-price">¥{{totalAmount}}</text>
+      <!-- <text>合计: </text>
+      <text class="total-price">{{totalAmount}}</text> -->
     </view>
     <view class="submit-btn" bindtap="submitOrder">提交计划</view>
   </view>

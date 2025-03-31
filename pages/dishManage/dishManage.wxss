@@ -276,4 +276,28 @@
   font-size: 28rpx;
   border: 1rpx solid #f0f0f0;
   border-radius: 8rpx;
-} 
+}
+
+/* 添加菜品描述的样式 */
+.dish-description {
+  font-size: 26rpx;
+  color: var(--gray-5);
+  margin-top: 6rpx;
+  width: 100%;
+}
+
+/* 文本超出显示省略号 */
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 确保菜品信息区域有足够的宽度 */
+.dish-info {
+  flex: 1;
+  overflow: hidden;
+  padding-right: 20rpx;
+}

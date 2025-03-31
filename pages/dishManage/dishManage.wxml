@@ -48,11 +48,11 @@
     
     <view class="dish-list" wx:if="{{filteredDishes.length > 0}}">
       <view class="dish-item" wx:for="{{filteredDishes}}" wx:key="id">
-        <image class="dish-image" src="{{item.image}}" mode="aspectFill"></image>
+        <image class="dish-image" src="{{item.image.url}}" mode="aspectFill"></image>
         <view class="dish-info">
           <view class="dish-name">{{item.name}}</view>
           <view class="dish-category">{{getCategoryName(item.categoryId)}}</view>
-          <view class="dish-price">¥{{item.price}}</view>
+          <view class="dish-description text-ellipsis">{{item.description || '暂无描述'}}</view>
         </view>
         <view class="dish-actions">
           <view class="action-btn edit" bindtap="editDish" data-dish="{{item}}">编辑</view>
@@ -87,4 +87,4 @@
       </view>
     </view>
   </view>
-</view> 
+</view>
