@@ -1,17 +1,19 @@
 <view class="manage-container">
   <!-- 顶部导航栏 -->
   <view class="tab-bar">
-    <view class="tab {{currentTab === 'category' ? 'active' : ''}}" bindtap="switchTab" data-tab="category">分类管理</view>
-    <view class="tab {{currentTab === 'dish' ? 'active' : ''}}" bindtap="switchTab" data-tab="dish">菜品管理</view>
+    <view class="tab {{currentTab === 'category' ? 'active' : ''}}" bindtap="switchTab" data-tab="category">
+      分类管理
+    </view>
+    <view class="tab {{currentTab === 'dish' ? 'active' : ''}}" bindtap="switchTab" data-tab="dish">
+      菜品管理
+    </view>
   </view>
-  
   <!-- 分类管理 -->
   <view class="category-manage" wx:if="{{currentTab === 'category'}}">
     <view class="manage-header">
       <view class="title">分类列表</view>
       <view class="btn btn-primary" bindtap="showAddCategory">添加分类</view>
     </view>
-    
     <view class="category-list" wx:if="{{categories.length > 0}}">
       <view class="category-item" wx:for="{{categories}}" wx:key="id">
         <view class="category-info">
@@ -24,14 +26,12 @@
         </view>
       </view>
     </view>
-    
     <!-- 空状态 -->
     <view class="empty-state" wx:else>
       <image class="empty-icon" src="/images/empty-category.png" mode="aspectFit"></image>
       <text>暂无分类</text>
     </view>
   </view>
-  
   <!-- 菜品管理 -->
   <view class="dish-manage" wx:if="{{currentTab === 'dish'}}">
     <view class="manage-header">
@@ -45,7 +45,6 @@
       </view>
       <view class="btn btn-primary" bindtap="addDish">添加菜品</view>
     </view>
-    
     <view class="dish-list" wx:if="{{filteredDishes.length > 0}}">
       <view class="dish-item" wx:for="{{filteredDishes}}" wx:key="id">
         <image class="dish-image" src="{{item.image.url}}" mode="aspectFill"></image>
@@ -60,14 +59,12 @@
         </view>
       </view>
     </view>
-    
     <!-- 空状态 -->
     <view class="empty-state" wx:else>
       <image class="empty-icon" src="/images/empty-dish.png" mode="aspectFit"></image>
       <text>暂无菜品</text>
     </view>
   </view>
-  
   <!-- 添加/编辑分类弹窗 -->
   <view class="modal" wx:if="{{showCategoryModal}}">
     <view class="modal-content">
@@ -78,7 +75,7 @@
       <view class="modal-body">
         <view class="form-item">
           <view class="form-label">分类名称</view>
-          <input class="form-input" placeholder="请输入分类名称" value="{{categoryForm.name}}" bindinput="onCategoryNameInput"/>
+          <input class="form-input" placeholder="请输入分类名称" value="{{categoryForm.name}}" bindinput="onCategoryNameInput" />
         </view>
       </view>
       <view class="modal-footer">

@@ -1,0 +1,8 @@
+<view class="login-container">
+  <view class="logo-container">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+  </view>
+  <view class="title">欢迎使用点餐小程序</view>
+  <view class="subtitle">请登录后继续使用</view>
+  <button class="login-btn" bindtap="handleLogin">微信一键登录</button>
+</view>

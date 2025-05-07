@@ -2,39 +2,30 @@
   <!-- 搜索栏 -->
   <view class="search-bar">
     <view class="search-input-wrap">
-      <input class="search-input" type="text" placeholder="搜索菜品" confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearch" value="{{searchKeyword}}"/>
+      <input class="search-input" type="text" placeholder="搜索菜品" confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearch" value="{{searchKeyword}}" />
       <image class="search-icon" src="/images/search.png" mode="aspectFit"></image>
     </view>
     <view wx:if="{{searchKeyword}}" class="search-clear" bindtap="clearSearch">清除</view>
   </view>
-  
+  <!-- 全局加载提示 -->
+  <view class="global-loading" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">{{loadingText || '加载中...'}}</text>
+  </view>
   <!-- 分类和菜品展示区域 -->
-  <view class="content-area">
+  <view class="content-area" wx:if="{{!isLoading || filteredDishes.length > 0}}">
     <!-- 左侧分类 -->
     <scroll-view class="category-list" scroll-y="true">
-      <view 
-        class="category-item {{currentCategory.id === item.id ? 'category-active' : ''}}" 
-        wx:for="{{categories}}" 
-        wx:key="id" 
-        bindtap="selectCategory" 
-        data-category="{{item}}"
-      >
+      <view class="category-item {{currentCategory.id === item.id ? 'category-active' : ''}}" wx:for="{{categories}}" wx:key="id" bindtap="selectCategory" data-category="{{item}}">
         <text>{{item.name}}</text>
       </view>
     </scroll-view>
-    
     <!-- 右侧菜品列表 -->
     <scroll-view class="dish-list" scroll-y="true" bindscrolltolower="loadMoreDishes">
       <view wx:if="{{filteredDishes.length > 0}}">
         <view class="dish-grid">
-          <view 
-            class="dish-item" 
-            wx:for="{{filteredDishes}}" 
-            wx:key="id" 
-            bindtap="showDishDetail" 
-            data-dish="{{item}}"
-          >
-            <image class="dish-image" src="{{item.image}}" mode="aspectFill"></image>
+          <view class="dish-item" wx:for="{{filteredDishes}}" wx:key="id" bindtap="showDishDetail" data-dish="{{item}}">
+            <image class="dish-image" src="{{item.image.url}}" mode="aspectFill"></image>
             <view class="dish-info">
               <text class="dish-name text-ellipsis">{{item.name}}</text>
               <!-- <text class="dish-price">¥{{item.price}}</text> -->
@@ -44,13 +35,12 @@
             </view>
           </view>
         </view>
-        
-        <!-- 加载更多 -->
-        <view class="loading-more" wx:if="{{isLoading}}">
-          <text>加载中...</text>
+        <!-- 加载更多提示 -->
+        <view class="loading-more" wx:if="{{isLoading && filteredDishes.length > 0}}">
+          <view class="loading-spinner small"></view>
+          <text>{{loadingText || '加载中...'}}</text>
         </view>
       </view>
-      
       <!-- 空状态 -->
       <view class="empty-state" wx:else>
         <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
@@ -58,7 +48,6 @@
       </view>
     </scroll-view>
   </view>
-  
   <!-- 底部结算栏 -->
   <view class="cart-bar">
     <view class="cart-info">
@@ -75,19 +64,20 @@
       去结算 ({{cartCount}})
     </view>
   </view>
-  
   <!-- 菜品详情弹窗 -->
   <view class="dish-detail-modal" wx:if="{{showDishDetail}}">
     <view class="dish-detail-content">
       <view class="dish-detail-close" bindtap="closeDishDetail">×</view>
-      <image class="dish-detail-image" src="{{currentDish.image}}" mode="aspectFill"></image>
+      <image class="dish-detail-image" src="{{currentDish.image.url}}" mode="aspectFill"></image>
       <view class="dish-detail-info">
         <view class="dish-detail-name">{{currentDish.name}}</view>
         <view class="dish-detail-desc">{{currentDish.description}}</view>
         <!-- <view class="dish-detail-price">¥{{currentDish.price}}</view> -->
         <view class="dish-detail-action">
           <view class="counter">
-            <view class="counter-btn minus {{currentDishCount > 0 ? 'active' : ''}}" catchtap="decreaseDishCount">-</view>
+            <view class="counter-btn minus {{currentDishCount > 0 ? 'active' : ''}}" catchtap="decreaseDishCount">
+              -
+            </view>
             <view class="counter-number">{{currentDishCount}}</view>
             <view class="counter-btn plus" catchtap="increaseDishCount">+</view>
           </view>
@@ -96,4 +86,4 @@
       </view>
     </view>
   </view>
-</view> 
+</view>

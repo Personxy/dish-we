@@ -1,4 +1,5 @@
 const app = getApp();
+import { dishes, categories } from "../../utils/api";
 
 Page({
   data: {
@@ -8,6 +9,8 @@ Page({
     currentCategory: {},
     searchKeyword: "",
     isLoading: false,
+    loadingText: "", // 添加加载文本
+    loadingTimer: null, // 添加计时器
     pageSize: 10,
     currentPage: 1,
     hasMore: true,
@@ -26,17 +29,92 @@ Page({
     this.updateCartInfo();
   },
 
+  // 显示加载提示
+  showLoading: function(text) {
+    // 清除之前的计时器
+    if (this.data.loadingTimer) {
+      clearTimeout(this.data.loadingTimer);
+    }
+    
+    // 设置一个300ms的延迟，如果加载很快就不显示loading
+    const timer = setTimeout(() => {
+      this.setData({
+        isLoading: true,
+        loadingText: text
+      });
+    }, 300);
+    
+    this.setData({
+      loadingTimer: timer
+    });
+  },
+  
+  // 隐藏加载提示
+  hideLoading: function() {
+    // 清除计时器
+    if (this.data.loadingTimer) {
+      clearTimeout(this.data.loadingTimer);
+    }
+    
+    this.setData({
+      isLoading: false,
+      loadingText: "",
+      loadingTimer: null
+    });
+  },
+
   // 加载分类数据
   loadCategories: function () {
-    // 从全局获取分类数据
-    const categories = app.globalData.categories;
-    if (categories && categories.length > 0) {
-      this.setData({
-        categories,
-        currentCategory: categories[0], // 默认选择第一个分类
+    // 显示加载提示
+    this.showLoading("获取分类中...");
+    
+    // 调用分类API
+    categories.getCategories({
+      withDishCount: true
+    }).then(res => {
+      if (res.success) {
+        const categoriesData = res.data || [];
+        
+        // 处理分类数据，确保字段一致性
+        const processedCategories = categoriesData.map(category => ({
+          ...category,
+          id: category._id, // 确保id字段一致
+          name: category.name,
+          description: category.description
+        }));
+        
+        // 更新全局数据
+        app.globalData.categories = processedCategories;
+        
+        if (processedCategories && processedCategories.length > 0) {
+          this.setData({
+            categories: processedCategories,
+            currentCategory: processedCategories[0], // 默认选择第一个分类
+          });
+          
+          // 隐藏分类加载提示
+          this.hideLoading();
+          
+          // 加载菜品数据
+          this.loadDishes();
+        } else {
+          this.hideLoading();
+        }
+      } else {
+        this.hideLoading();
+        wx.showToast({
+          title: '获取分类失败',
+          icon: 'none'
+        });
+      }
+    }).catch(err => {
+      console.error('获取分类失败', err);
+      this.hideLoading();
+      wx.showToast({
+        title: '获取分类失败',
+        icon: 'none'
       });
-      this.loadDishes();
-    }
+    });
   },
 
   // 加载菜品数据
@@ -45,44 +123,83 @@ Page({
       this.setData({
         currentPage: 1,
         hasMore: true,
-        isLoading: true,
       });
+      
+      // 显示加载提示
+      this.showLoading("获取菜品中...");
+    } else {
+      // 加载更多时显示不同的提示
+      this.showLoading("加载更多菜品...");
     }
 
-    // 从全局获取菜品数据
-    const dishes = app.globalData.dishes;
+    // 构建查询参数
+    const params = {
+      page: this.data.currentPage,
+      limit: this.data.pageSize,
+      sort: 'createdAt:desc'
+    };
 
-    // 模拟网络请求延迟
-    setTimeout(() => {
-      // 根据当前分类过滤菜品
-      let filteredDishes = [];
+    // 如果有分类筛选
+    if (this.data.currentCategory && this.data.currentCategory.id) {
+      params.category = this.data.currentCategory.id;
+    }
 
-      if (this.data.searchKeyword) {
-        // 搜索模式：根据关键字搜索所有菜品
-        filteredDishes = dishes.filter(
-          (dish) =>
-            dish.name.indexOf(this.data.searchKeyword) > -1 || dish.description.indexOf(this.data.searchKeyword) > -1
-        );
+    // 如果有搜索关键词
+    if (this.data.searchKeyword) {
+      params.search = this.data.searchKeyword;
+    }
+
+    // 只获取可用菜品
+    params.isAvailable = true;
+
+    // 调用菜品API
+    dishes.getDishes(params).then(res => {
+      if (res.success) {
+        const dishesData = res.data || [];
+        const pagination = res.pagination || {};
+        
+        // 处理菜品数据，确保字段一致性
+        const processedDishes = dishesData.map(dish => ({
+          ...dish,
+          id: dish._id, // 确保id字段一致
+          categoryId: dish.category._id, // 确保categoryId字段一致
+          image: dish.image, // 图片URL
+          price: dish.price,
+          name: dish.name,
+          description: dish.description
+        }));
+        
+        // 更新全局数据
+        if (!isLoadMore) {
+          app.globalData.dishes = processedDishes;
+        }
+        
+        // 判断是否还有更多数据
+        const hasMore = pagination.page < pagination.pages;
+        
+        this.setData({
+          dishes: processedDishes,
+          filteredDishes: isLoadMore ? [...this.data.filteredDishes, ...processedDishes] : processedDishes,
+          hasMore: hasMore
+        });
+        
+        // 隐藏加载提示
+        this.hideLoading();
       } else {
-        // 根据当前分类过滤
-        filteredDishes = dishes.filter((dish) => dish.categoryId === this.data.currentCategory.id);
+        this.hideLoading();
+        wx.showToast({
+          title: '获取菜品失败',
+          icon: 'none'
+        });
       }
-
-      // 分页处理
-      const startIndex = (this.data.currentPage - 1) * this.data.pageSize;
-      const endIndex = this.data.currentPage * this.data.pageSize;
-      const currentPageDishes = filteredDishes.slice(startIndex, endIndex);
-
-      // 判断是否还有更多数据
-      const hasMore = filteredDishes.length > endIndex;
-
-      this.setData({
-        dishes: filteredDishes,
-        filteredDishes: isLoadMore ? [...this.data.filteredDishes, ...currentPageDishes] : currentPageDishes,
-        isLoading: false,
-        hasMore,
+    }).catch(err => {
+      console.error('获取菜品失败', err);
+      this.hideLoading();
+      wx.showToast({
+        title: '获取菜品失败',
+        icon: 'none'
       });
-    }, 500);
+    });
   },
 
   // 选择分类

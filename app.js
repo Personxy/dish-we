@@ -1,4 +1,3 @@
-
 import { user } from "./utils/api";
 App({
   globalData: {
@@ -10,16 +9,20 @@ App({
     openid: null, // 用户openid
     isNewUser: false, // 是否是新用户
     userInfoReadyCallback: null, // 添加回调函数属性
+    loginSuccessCallback: null, // 添加登录成功回调函数
   },
 
   onLaunch: function () {
-    wx.setStorageSync("serverUrl", "http://localhost:5000");
+    wx.setEnableDebug({
+      enableDebug: true,
+    });
+    wx.setStorageSync("serverUrl", "https://yangjile.cn/api");
     // 检查本地是否有缓存的token和用户信息
     const token = wx.getStorageSync("token");
     const userInfo = wx.getStorageSync("userInfo");
 
     if (userInfo) {
-      this.globalData.userInfo = userInfo
+      this.globalData.userInfo = userInfo;
     }
 
     if (token) {
@@ -28,23 +31,24 @@ App({
         this.getUserInfo();
       }
     } else {
-      // 执行微信登录
-      this.wechatLogin();
+      // 没有token时，跳转到登录页面
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
     }
-
-    // 加载菜品分类和菜品数据
-   
   },
 
   // 微信登录
   wechatLogin: function () {
     wx.login({
       success: (res) => {
+        console.log(res);
         if (res.code) {
           // 使用 api 封装的方法
           user
             .wechatLogin(res.code)
             .then((result) => {
+              console.log(result);
               if (result.success) {
                 // 判断是否是新用户
                 const isNewUser = result.isNewUser || false;
@@ -58,15 +62,15 @@ App({
                 } else {
                   // 老用户，获取用户信息
                   this.getUserInfo();
+                  // 调用登录成功回调
+                  if (this.loginSuccessCallback) {
+                    this.loginSuccessCallback();
+                  }
                 }
-              } else {
-                wx.showToast({
-                  title: "登录失败",
-                  icon: "none",
-                });
               }
             })
-            .catch(() => {
+            .catch((err) => {
+              console.error("微信登录失败", err);
               wx.showToast({
                 title: "网络错误",
                 icon: "none",
@@ -79,6 +83,13 @@ App({
           });
         }
       },
+      fail: (err) => {
+        console.log("登录失败", err);
+        wx.showToast({
+          title: "登录失败",
+          icon: "none",
+        });
+      },
     });
   },
 
@@ -89,12 +100,12 @@ App({
       .getProfile()
       .then((res) => {
         if (res.success) {
-          this.globalData.userInfo = res.data
-       
-          console.log(res.data,this.globalData.userInfo);
+          this.globalData.userInfo = res.data;
+
+          console.log(res.data, this.globalData.userInfo);
           // 缓存用户信息
           wx.setStorageSync("userInfo", res.data);
-          
+
           // 如果有回调函数，则执行回调
           if (this.globalData.userInfoReadyCallback) {
             this.globalData.userInfoReadyCallback(res.data);
@@ -105,8 +116,6 @@ App({
         console.error("获取用户信息失败", err);
       });
   },
-
-
 
   // 添加商品到购物车
   addToCart: function (dish) {

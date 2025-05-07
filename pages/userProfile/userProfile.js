@@ -9,16 +9,15 @@ Page({
     isUploading: false, // 头像上传状态
   },
 
-  onLoad: function () {
-    // 页面加载时可以执行一些初始化
-    const userInfo = wx.getStorageSync("userInfo");
-    if (userInfo) {
-      this.setData({
-        avatarUrl: userInfo.avatar,
-        serverAvatarUrl: userInfo.avatar,
-        username: userInfo.username,
-      });
-    }
+  onLoad: function (options) {
+    // 获取本地存储的用户信息
+    const userInfo = wx.getStorageSync("userInfo") || {};
+
+    // 设置初始数据
+    this.setData({
+      avatarUrl: userInfo.avatar || "/images/default-avatar.png",
+      username: userInfo.username || "",
+    });
   },
 
   // 头像选择回调
@@ -60,7 +59,7 @@ Page({
 
   // 提交用户信息
   submitUserInfo() {
-    const { username, serverAvatarUrl, isUploading } = this.data;
+    const { username, serverAvatarUrl, isUploading, avatarUrl } = this.data;
     if (!username.trim()) {
       wx.showToast({
         title: "请输入昵称",
@@ -79,7 +78,7 @@ Page({
     }
 
     // 如果没有选择新头像或上传失败
-    if (!serverAvatarUrl) {
+    if (!serverAvatarUrl && avatarUrl === "/images/default-avatar.png") {
       wx.showToast({
         title: "请选择头像",
         icon: "none",
@@ -94,7 +93,7 @@ Page({
     user
       .updateProfile({
         username: username,
-        avatar: serverAvatarUrl,
+        avatar: serverAvatarUrl || avatarUrl,
       })
       .then((res) => {
         this.setData({ isSubmitting: false });
@@ -147,49 +146,75 @@ Page({
         return;
       }
 
-      // 判断是微信临时文件还是网络URL
-      // const isWechatTempFile = avatarUrl.indexOf("wxfile://") === 0;
       const serverUrl = wx.getStorageSync("serverUrl");
       const token = wx.getStorageSync("token");
 
-      // 下载头像图片
-      wx.downloadFile({
-        url: avatarUrl,
-        success(res) {
-          if (res.statusCode === 200) {
-            console.log("download success");
-            const tempFilePath = res.tempFilePath;
-            console.log("获取到用户头像tempFilePath：" + tempFilePath);
-            wx.uploadFile({
-              url: `${serverUrl}/api/users/upload-avatar`,
-              filePath: tempFilePath,
-              name: "avatar",
-              header: {
-                Authorization: `Bearer ${token}`,
-              },
-              success: function (res) {
-                try {
-                  const data = JSON.parse(res.data);
-                  if (data.success) {
-                    resolve(data.data.avatar);
-                  } else {
-                    reject(new Error(data.error || "上传失败"));
+      // 判断路径类型
+      if (avatarUrl.startsWith("wxfile://")) {
+        // 本地临时文件路径，直接上传
+        wx.uploadFile({
+          url: `${serverUrl}/api/users/upload-avatar`,
+          filePath: avatarUrl,
+          name: "avatar",
+          header: {
+            Authorization: `Bearer ${token}`,
+          },
+          success: function (res) {
+            try {
+              const data = JSON.parse(res.data);
+              if (data.success) {
+                resolve(data.data.avatar);
+              } else {
+                reject(new Error(data.error || "上传失败"));
+              }
+            } catch (e) {
+              reject(new Error("解析响应失败"));
+            }
+          },
+          fail: function () {
+            reject(new Error("上传失败"));
+          },
+        });
+      } else if (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://")) {
+        // 网络地址，需要先下载
+        wx.downloadFile({
+          url: avatarUrl,
+          success(res) {
+            if (res.statusCode === 200) {
+              wx.uploadFile({
+                url: `${serverUrl}/api/users/upload-avatar`,
+                filePath: res.tempFilePath,
+                name: "avatar",
+                header: {
+                  Authorization: `Bearer ${token}`,
+                },
+                success: function (res2) {
+                  try {
+                    const data = JSON.parse(res2.data);
+                    if (data.success) {
+                      resolve(data.data.avatar);
+                    } else {
+                      reject(new Error(data.error || "上传失败"));
+                    }
+                  } catch (e) {
+                    reject(new Error("解析响应失败"));
                   }
-                } catch (e) {
-                  reject(new Error("解析响应失败"));
-                }
-              },
-              fail: function (err) {
-                reject(new Error("上传失败"));
-              },
-            });
-          }
-        },
-        fail(err) {
-          console.log("download fail", err);
-          reject(new Error("下载失败"));
-        },
-      });
+                },
+                fail: function () {
+                  reject(new Error("上传失败"));
+                },
+              });
+            } else {
+              reject(new Error("下载失败"));
+            }
+          },
+          fail(err) {
+            reject(new Error("下载失败"));
+          },
+        });
+      } else {
+        reject(new Error("不支持的头像路径格式"));
+      }
     });
   },
 });

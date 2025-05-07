@@ -8,9 +8,7 @@
       <view class="user-nickname">{{userInfo.username || '游客'}}</view>
       <!-- <view class="user-welcome">静静今天吃什么</view> -->
     </view>
-    <view class="arrow-right">
-       <text class="arrow-text">></text>
-    </view>
+  
   </view>
   
   <!-- 功能入口区域 -->

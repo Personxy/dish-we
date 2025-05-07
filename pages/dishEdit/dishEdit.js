@@ -95,7 +95,7 @@ Page({
         name: dish.name || "",
         categoryId: dish.category || dish.categoryId || "", // 兼容两种字段名
         price: dish.price || "",
-        image: dish.image || "",
+        image: dish.image.url || "",
         description: dish.description || "",
       },
     });
@@ -278,9 +278,14 @@ Page({
           success: (res) => {
             if (res.statusCode === 200) {
               wx.hideLoading();
-              // 下载成功后，上传本地临时文件
-              this.uploadLocalImage(res.tempFilePath)
-                .then((fileUrl) => resolve(fileUrl))
+              // 下载成功后，检查文件大小并可能压缩
+              this.checkAndCompressImage(res.tempFilePath)
+                .then((compressedPath) => {
+                  // 上传压缩后的图片
+                  this.uploadLocalImage(compressedPath)
+                    .then((fileUrl) => resolve(fileUrl))
+                    .catch((err) => reject(err));
+                })
                 .catch((err) => reject(err));
             } else {
               wx.hideLoading();
@@ -294,11 +299,93 @@ Page({
           },
         });
       } else {
-        // 直接上传本地图片
-        this.uploadLocalImage(imagePath)
-          .then((fileUrl) => resolve(fileUrl))
+        // 直接检查本地图片大小并可能压缩
+        this.checkAndCompressImage(imagePath)
+          .then((compressedPath) => {
+            // 上传压缩后的图片
+            this.uploadLocalImage(compressedPath)
+              .then((fileUrl) => resolve(fileUrl))
+              .catch((err) => reject(err));
+          })
           .catch((err) => reject(err));
       }
+    });
+  },
+
+  // 检查图片大小并在需要时压缩
+  checkAndCompressImage: function (imagePath) {
+    return new Promise((resolve, reject) => {
+      // 获取文件信息
+      wx.getFileSystemManager().getFileInfo({
+        filePath: imagePath,
+        success: (res) => {
+          const sizeInMB = res.size / (1024 * 1024);
+          console.log("图片大小:", sizeInMB.toFixed(2) + "MB");
+
+          // 如果图片大于5MB，进行压缩
+          if (sizeInMB > 5) {
+            wx.showLoading({
+              title: "压缩图片中...",
+            });
+
+            // 使用微信小程序的压缩图片API
+            wx.compressImage({
+              src: imagePath,
+              quality: 80, // 压缩质量，范围0-100
+              success: (res) => {
+                wx.hideLoading();
+                console.log("图片已压缩:", res.tempFilePath);
+
+                // 再次检查压缩后的大小
+                wx.getFileSystemManager().getFileInfo({
+                  filePath: res.tempFilePath,
+                  success: (info) => {
+                    const compressedSizeInMB = info.size / (1024 * 1024);
+                    console.log("压缩后大小:", compressedSizeInMB.toFixed(2) + "MB");
+
+                    // 如果压缩后仍然大于5MB，尝试更高压缩率
+                    if (compressedSizeInMB > 5) {
+                      wx.compressImage({
+                        src: imagePath,
+                        quality: 50, // 更高压缩率
+                        success: (result) => {
+                          resolve(result.tempFilePath);
+                        },
+                        fail: (err) => {
+                          console.error("二次压缩失败", err);
+                          // 即使二次压缩失败，仍然使用第一次压缩的结果
+                          resolve(res.tempFilePath);
+                        },
+                      });
+                    } else {
+                      resolve(res.tempFilePath);
+                    }
+                  },
+                  fail: (err) => {
+                    console.error("获取压缩后图片信息失败", err);
+                    // 即使获取信息失败，仍然使用压缩后的图片
+                    resolve(res.tempFilePath);
+                  },
+                });
+              },
+              fail: (err) => {
+                wx.hideLoading();
+                console.error("压缩图片失败", err);
+                // 如果压缩失败，仍然使用原图
+                resolve(imagePath);
+              },
+            });
+          } else {
+            // 如果图片小于5MB，直接使用原图
+            resolve(imagePath);
+          }
+        },
+        fail: (err) => {
+          console.error("获取图片信息失败", err);
+          // 如果获取信息失败，仍然使用原图
+          resolve(imagePath);
+        },
+      });
     });
   },
 
@@ -370,9 +457,11 @@ Page({
     const dishData = {
       name: dishForm.name,
       category: dishForm.categoryId, // 使用 category 字段
-      price: parseFloat(dishForm.price),
+      // price: parseFloat(dishForm.price),
       description: dishForm.description,
-      image: dishForm.image, // 已上传的图片URL
+      image: {
+        url: dishForm.image, // 已上传的图片URL
+      },
     };
 
     // 根据是否编辑模式调用不同的API

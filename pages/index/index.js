@@ -18,9 +18,9 @@ Page({
 
   onTabItemTap(item) {
     // tab 点击时执行
-    console.log(item.index)
-    console.log(item.pagePath)
-    console.log(item.text)
+    console.log(item.index);
+    console.log(item.pagePath);
+    console.log(item.text);
   },
   onLoad() {
     // 检查是否有用户信息
@@ -61,13 +61,13 @@ Page({
   onShow() {
     // 更新购物车数量
     this.updateCartCount();
-    
+
     // 获取最新的用户信息
-    const userInfo = wx.getStorageSync('userInfo');
+    const userInfo = wx.getStorageSync("userInfo");
     if (userInfo) {
       this.setData({
         userInfo: userInfo,
-        hasUserInfo: true
+        hasUserInfo: true,
       });
     }
   },
@@ -89,7 +89,11 @@ Page({
       isAdmin,
     });
   },
-
+  navigateToUserProfile: function () {
+    wx.navigateTo({
+      url: "/pages/userProfile/userProfile",
+    });
+  },
   // 获取推荐菜品
   getRecommendDishes() {
     // 这里应该从服务器获取推荐菜品
@@ -172,7 +176,7 @@ Page({
   // 在现有方法下方添加以下方法
   navigateToUserProfile() {
     wx.navigateTo({
-      url: '/pages/userProfile/userProfile'
+      url: "/pages/userProfile/userProfile",
     });
   },
 });

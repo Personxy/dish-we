@@ -6,7 +6,8 @@
     "pages/myOrder/myOrder",
     "pages/dishManage/dishManage",
     "pages/dishEdit/dishEdit",
-    "pages/userProfile/userProfile"
+    "pages/userProfile/userProfile",
+    "pages/login/login"
   ],
   "window": {
     "backgroundTextStyle": "light",

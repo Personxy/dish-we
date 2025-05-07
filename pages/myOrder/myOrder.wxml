@@ -2,102 +2,91 @@
   <!-- 搜索栏 -->
   <view class="search-bar">
     <view class="search-input-wrap">
-      <input class="search-input" type="text" placeholder="搜索日程" confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearch" value="{{searchKeyword}}"/>
+      <input class="search-input" type="text" placeholder="搜索日程" confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearch" value="{{searchKeyword}}" />
       <image class="search-icon" src="/images/search.png" mode="aspectFit"></image>
     </view>
     <view wx:if="{{searchKeyword}}" class="search-clear" bindtap="clearSearch">清除</view>
   </view>
-  
+  <!-- 全局加载提示 -->
+  <view class="global-loading" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">{{loadingText || '加载中...'}}</text>
+  </view>
   <!-- 订单过滤 -->
   <view class="filter-tabs">
-    <view 
-      class="filter-tab {{currentStatus === '' ? 'active' : ''}}" 
-      bindtap="filterByStatus" 
-      data-status=""
-    >全部</view>
-    <view 
-      class="filter-tab {{currentStatus === '待处理' ? 'active' : ''}}" 
-      bindtap="filterByStatus" 
-      data-status="待处理"
-    >待处理</view>
-    <view 
-      class="filter-tab {{currentStatus === '处理中' ? 'active' : ''}}" 
-      bindtap="filterByStatus" 
-      data-status="处理中"
-    >处理中</view>
-    <view 
-      class="filter-tab {{currentStatus === '已完成' ? 'active' : ''}}" 
-      bindtap="filterByStatus" 
-      data-status="已完成"
-    >已完成</view>
+    <view class="filter-tab {{currentStatus === '' ? 'active' : ''}}" bindtap="filterByStatus" data-status="">
+      全部
+    </view>
+    <view class="filter-tab {{currentStatus === '待处理' ? 'active' : ''}}" bindtap="filterByStatus" data-status="待处理">
+      待处理
+    </view>
+    <view class="filter-tab {{currentStatus === '处理中' ? 'active' : ''}}" bindtap="filterByStatus" data-status="处理中">
+      处理中
+    </view>
+    <view class="filter-tab {{currentStatus === '已取消' ? 'active' : ''}}" bindtap="filterByStatus" data-status="已取消">
+      已取消
+    </view>
+    <view class="filter-tab {{currentStatus === '已完成' ? 'active' : ''}}" bindtap="filterByStatus" data-status="已完成">
+      已完成
+    </view>
   </view>
-  
   <!-- 订单列表 -->
   <view class="order-list">
-    <view wx:if="{{filteredOrders.length > 0}}">
-      <view 
-        wx:for="{{filteredOrders}}" 
-        wx:key="orderNo" 
-        class="order-card"
-        bindtap="showOrderDetail"
-        data-order="{{item}}"
-      >
+    <view wx:if="{{orders.length > 0}}" class="order-list-container">
+      <view wx:for="{{orders}}" wx:key="id" class="order-card" bindtap="showOrderDetail" data-order="{{item}}">
         <movable-area class="movable-area">
-          <movable-view 
-            class="movable-view"
-            direction="horizontal"
-            out-of-bounds="{{false}}"
-            x="{{item.x}}"
-            inertia="{{true}}"
-            data-index="{{index}}"
-            bindchange="handleMovableViewChange"
-            bindtouchend="handleTouchEnd"
-          >
+          <movable-view class="movable-view" direction="horizontal" out-of-bounds="{{false}}" x="{{item.x}}" inertia="{{true}}" data-index="{{index}}" bindchange="handleMovableViewChange" bindtouchend="handleTouchEnd">
             <!-- 订单内容 -->
             <view class="order-content">
               <view class="order-header">
-                <view class="order-no">日程编号: {{item.orderNo}}</view>
-                <view class="order-status {{item.status === '待处理' ? 'status-pending' : (item.status === '处理中' ? 'status-processing' : 'status-completed')}}">{{item.status}}</view>
+                <view class="order-no">日程编号: {{item.id}}</view>
+                <view class="order-status {{item.status === '待处理' ? 'status-pending' : (item.status === '处理中' ? 'status-processing' : 'status-completed')}}">
+                  {{item.status}}
+                </view>
               </view>
-              
               <view class="order-info">
                 <view class="order-time">日程创建时间: {{item.createTime}}</view>
                 <view class="order-appointment-time">预约: {{item.appointmentTime}}</view>
               </view>
-              
               <view class="order-items">
                 <text class="order-item-summary">{{item.itemSummary}}</text>
+                <text class="order-item-summary">1</text>
               </view>
-              
               <view class="order-footer">
                 <view class="order-total">
-                  <text>合计: </text>
+                  <text>合计:</text>
                   <text class="price">¥{{item.totalAmount}}</text>
                 </view>
-                
                 <view class="order-actions">
-                  <view class="btn btn-outline" wx:if="{{item.status === '待备料'}}" catchtap="cancelOrder" data-order-no="{{item.orderNo}}">取消日程</view>
-                  <view class="btn btn-primary" wx:if="{{item.status === '正在烹饪' || item.status === '处理中'}}">查看详情</view>
+                  <view class="btn btn-outline" wx:if="{{item.status === '待处理'}}" catchtap="cancelOrder" data-order-id="{{item.id}}">
+                    取消日程
+                  </view>
+                  <view class="btn btn-primary" wx:if="{{item.status === '处理中'}}">查看详情</view>
                   <view class="btn btn-primary" wx:if="{{item.status === '已完成'}}">再次规划日程</view>
                 </view>
               </view>
             </view>
           </movable-view>
         </movable-area>
-        
         <!-- 删除按钮 -->
-        <view class="delete-btn" catchtap="deleteOrder" data-order-no="{{item.orderNo}}">删除</view>
+        <!-- <view class="delete-btn" catchtap="deleteOrder" data-order-id="{{item.id}}">删除</view> -->
+      </view>
+      <!-- 加载更多 -->
+      <view class="load-more" wx:if="{{hasMore && !isLoading}}" bindtap="loadMoreOrders">
+        <text>加载更多</text>
+      </view>
+      <!-- 没有更多数据 -->
+      <view class="no-more" wx:if="{{!hasMore && orders.length > 0 && !isLoading}}">
+        <text>没有更多数据了</text>
       </view>
     </view>
-    
     <!-- 空订单状态 -->
-    <view class="empty-state" wx:else>
+    <view class="empty-state" wx:if="{{!isLoading && orders.length === 0}}">
       <image class="empty-icon" src="/images/empty-order.png" mode="aspectFit"></image>
       <text>暂无日程</text>
       <view class="btn btn-primary go-order-btn" bindtap="goToOrder">去点餐</view>
     </view>
   </view>
-  
   <!-- 订单详情弹窗 -->
   <view class="order-detail-modal" wx:if="{{showOrderDetail}}">
     <view class="order-detail-content">
@@ -105,69 +94,47 @@
         <view class="detail-title">日程详情</view>
         <view class="detail-close" bindtap="closeOrderDetail">×</view>
       </view>
-      
       <scroll-view scroll-y="true" class="detail-scroll">
         <view class="detail-info">
           <view class="detail-item">
             <text class="detail-label">日程编号</text>
             <text class="detail-value">{{currentOrder.orderNo}}</text>
           </view>
-          
           <view class="detail-item">
             <text class="detail-label">日程创建时间</text>
             <text class="detail-value">{{currentOrder.createTime}}</text>
           </view>
-          
           <view class="detail-item">
             <text class="detail-label">预约时间</text>
             <text class="detail-value">{{currentOrder.appointmentTime}}</text>
           </view>
-          
           <view class="detail-item">
             <text class="detail-label">日程状态</text>
-            <text class="detail-value status-text {{currentOrder.status === '待处理' ? 'status-pending' : (currentOrder.status === '处理中' ? 'status-processing' : 'status-completed')}}">{{currentOrder.status}}</text>
+            <text class="detail-value status-text {{currentOrder.status === '待处理' ? 'status-pending' : (currentOrder.status === '处理中' ? 'status-processing' : 'status-completed')}}">
+              {{currentOrder.status}}
+            </text>
           </view>
-          
           <view class="detail-item">
             <text class="detail-label">备注</text>
             <text class="detail-value">{{currentOrder.remark || '无'}}</text>
           </view>
         </view>
-        
         <view class="detail-items">
           <view class="detail-section-title">商品信息</view>
-          
           <view class="detail-item-list">
-            <view class="detail-item-card" wx:for="{{currentOrder.items}}" wx:key="id">
-              <image class="detail-item-image" src="{{item.image}}" mode="aspectFill"></image>
+            <view class="detail-item-card" wx:for="{{currentOrder.items}}" wx:key="dish">
+              <image class="detail-item-image" src="{{item.image.url}}" mode="aspectFill"></image>
               <view class="detail-item-info">
                 <view class="detail-item-name">{{item.name}}</view>
-                <view class="detail-item-price">¥{{item.price}} × {{item.count}}</view>
+                <view class="detail-item-price">¥{{item.price}} × {{item.quantity}}</view>
               </view>
-              <!-- <view class="detail-item-total">¥{{(item.price * item.count).toFixed(2)}}</view> -->
+              <view class="detail-item-total">¥{{item.subtotal}}</view>
             </view>
           </view>
         </view>
-        
         <view class="detail-price">
           <view class="detail-section-title">价格详情</view>
-          
           <view class="detail-price-list">
-            <view class="detail-price-item">
-              <text>商品金额</text>
-              <text>¥{{currentOrder.subtotal}}</text>
-            </view>
-            
-            <view class="detail-price-item">
-              <text>包装费</text>
-              <text>¥{{currentOrder.packagingFee}}</text>
-            </view>
-            
-            <view class="detail-price-item">
-              <text>配送费</text>
-              <text>¥{{currentOrder.deliveryFee}}</text>
-            </view>
-            
             <view class="detail-price-item total">
               <text>合计</text>
               <text class="total-price">¥{{currentOrder.totalAmount}}</text>
@@ -175,11 +142,14 @@
           </view>
         </view>
       </scroll-view>
-      
       <view class="detail-actions">
-        <view class="btn btn-outline" wx:if="{{currentOrder.status === '待处理'}}" bindtap="cancelCurrentOrder">取消日程</view>
-        <view class="btn btn-primary" wx:if="{{currentOrder.status === '已完成'}}" bindtap="reorder">再次日程</view>
+        <view class="btn btn-outline" wx:if="{{currentOrder.status === '待处理'}}" bindtap="cancelCurrentOrder">
+          取消日程
+        </view>
+        <view class="btn btn-primary" wx:if="{{currentOrder.status === '已完成'}}" bindtap="reorder">
+          再次日程
+        </view>
       </view>
     </view>
   </view>
-</view> 
+</view>

@@ -42,17 +42,17 @@ Page({
 
           // 生成分类名称列表：用于筛选菜品
           const categoryNames = ["全部分类"].concat(categories.map((item) => item.name));
-
+          console.log("分类数据", categories);
           // 先设置基本分类数据
           this.setData({
-            categories: categories.map(category => ({
+            categories: categories.map((category) => ({
               ...category,
               id: category._id, // 确保 id 字段一致
-              dishCount: 0, // 初始化菜品数量为0
+              dishCount: Number(category.dishCount || 0), // 确保 dishCount 是数字类型
             })),
             categoryNames,
           });
-          
+          console.log(this.data.categories);
           // 加载菜品数据后再更新菜品数量
           this.loadDishes();
         }
@@ -65,39 +65,39 @@ Page({
         });
       });
   },
-  
+
   // 加载菜品数据
-  loadDishes: function() {
+  loadDishes: function () {
     // 使用 API 获取菜品数据
-    dishes.getDishes().then(res => {
-      if (res.success) {
-        const dishesData = res.data || [];
+    dishes
+      .getDishes()
+      .then((res) => {
+        if (res.success) {
+          const dishesData = res.data || [];
 
-        // 更新全局数据
-        app.globalData.dishes = dishesData;
-        
-        // 处理菜品数据，确保字段一致性
-        const processedDishes = dishesData.map(dish => ({
-          ...dish,
-          id: dish._id, // 确保 id 字段一致
-          categoryId: dish.category, // 确保 categoryId 字段一致
-        }));
+          // 更新全局数据
+          app.globalData.dishes = dishesData;
 
-        this.setData({
-          dishes: processedDishes,
-          filteredDishes: processedDishes // 默认显示所有菜品
+          // 处理菜品数据，确保字段一致性
+          const processedDishes = dishesData.map((dish) => ({
+            ...dish,
+            id: dish._id, // 确保 id 字段一致
+            categoryId: dish.category, // 确保 categoryId 字段一致
+          }));
+
+          this.setData({
+            dishes: processedDishes,
+            filteredDishes: processedDishes, // 默认显示所有菜品
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("获取菜品失败", err);
+        wx.showToast({
+          title: "获取菜品失败",
+          icon: "none",
         });
-
-        // 更新分类中的菜品数量
-        this.updateCategoryDishCount();
-      }
-    }).catch(err => {
-      console.error('获取菜品失败', err);
-      wx.showToast({
-        title: '获取菜品失败',
-        icon: 'none'
       });
-    });
   },
 
   // 切换标签页
@@ -398,7 +398,7 @@ Page({
 
     // 将完整的菜品数据转为 JSON 字符串传递
     const dishData = JSON.stringify(dish);
-    
+
     // 跳转到菜品编辑页面，并传递菜品数据
     wx.navigateTo({
       url: `/pages/dishEdit/dishEdit?id=${dish.id}&dishData=${encodeURIComponent(dishData)}`,
@@ -418,16 +418,17 @@ Page({
           wx.showLoading({
             title: "删除中...",
           });
-          
+
           // 调用删除菜品API
-          dishes.deleteDish(dishId)
-            .then(res => {
+          dishes
+            .deleteDish(dishId)
+            .then((res) => {
               if (res.success) {
                 wx.hideLoading();
-                
+
                 // 刷新菜品数据
                 this.loadDishes();
-                
+
                 wx.showToast({
                   title: "菜品已删除",
                   icon: "success",
@@ -436,7 +437,7 @@ Page({
                 throw new Error(res.error?.message || "删除失败");
               }
             })
-            .catch(err => {
+            .catch((err) => {
               wx.hideLoading();
               wx.showToast({
                 title: err.message || "删除失败",
@@ -445,23 +446,6 @@ Page({
             });
         }
       },
-    });
-  },
-
-  // 更新分类中的菜品数量
-  updateCategoryDishCount: function () {
-    const { categories, dishes } = this.data;
-
-    const updatedCategories = categories.map((category) => {
-      const dishCount = dishes.filter((dish) => dish.categoryId === category.id).length;
-      return {
-        ...category,
-        dishCount,
-      };
-    });
-
-    this.setData({
-      categories: updatedCategories,
     });
   },
 });
