@@ -62,6 +62,9 @@ Page({
     // 更新购物车数量
     this.updateCartCount();
 
+    // 每次进入首页时重新获取用户信息
+    app.getUserInfo();
+    
     // 获取最新的用户信息
     const userInfo = wx.getStorageSync("userInfo");
     if (userInfo) {
@@ -70,6 +73,48 @@ Page({
         hasUserInfo: true,
       });
     }
+  },
+
+  // 添加下拉刷新函数
+  onPullDownRefresh: function() {
+    console.log('下拉刷新触发');
+    
+    // 显示导航条加载动画
+    wx.showNavigationBarLoading();
+    
+    // 重新获取用户信息
+    app.getUserInfo();
+    
+    // 重新获取推荐菜品
+    this.getRecommendDishes();
+    
+    // 获取最新的用户信息并更新页面
+    const userInfo = wx.getStorageSync("userInfo");
+    if (userInfo) {
+      this.setData({
+        userInfo: userInfo,
+        hasUserInfo: true,
+      });
+      this.checkIsAdmin();
+    }
+    
+    // 更新购物车数量
+    this.updateCartCount();
+    
+    // 模拟网络请求延迟，0.5秒后停止下拉刷新动画
+    setTimeout(() => {
+      // 隐藏导航条加载动画
+      wx.hideNavigationBarLoading();
+      // 停止下拉刷新动画
+      wx.stopPullDownRefresh();
+      
+      // 提示用户刷新成功
+      wx.showToast({
+        title: '刷新成功',
+        icon: 'success',
+        duration: 1000
+      });
+    }, 500);
   },
 
   // 更新用户信息到服务器
@@ -83,8 +128,8 @@ Page({
   checkIsAdmin() {
     // 这里可以根据实际需求来判断是否为管理员
     // 示例：假设微信昵称包含"admin"则为管理员
-    // const isAdmin = this.data.userInfo.nickName && this.data.userInfo.nickName.toLowerCase().includes('admin')
-    const isAdmin = "admin";
+    const isAdmin = this.data.userInfo.role === "admin";
+
     this.setData({
       isAdmin,
     });

@@ -102,7 +102,6 @@ App({
         if (res.success) {
           this.globalData.userInfo = res.data;
 
-          console.log(res.data, this.globalData.userInfo);
           // 缓存用户信息
           wx.setStorageSync("userInfo", res.data);
 

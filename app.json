@@ -29,15 +29,15 @@
       },
       {
         "pagePath": "pages/order/order",
-        "text": "开选!",
-        "iconPath": "images/order.png",
-        "selectedIconPath": "images/order_selected.png"
+        "text": "点餐",
+        "iconPath": "images/order_food.png",
+        "selectedIconPath": "images/order_food_selected.png"
       },
       {
         "pagePath": "pages/myOrder/myOrder",
-        "text": "还没吃",
-        "iconPath": "images/my_order.png",
-        "selectedIconPath": "images/my_order_selected.png"
+        "text": "我的计划",
+        "iconPath": "images/order.png",
+        "selectedIconPath": "images/order-selected.png"
       }
     ]
   },

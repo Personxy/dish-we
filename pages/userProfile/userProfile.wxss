@@ -32,8 +32,8 @@
 }
 
 .avatar-wrapper {
-  width: 200rpx;
-  height: 200rpx;
+  width: 320rpx !important;
+  height: 300rpx;
   border-radius: 50%;
   overflow: hidden;
   padding: 0;
