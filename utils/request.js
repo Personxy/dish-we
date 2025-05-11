@@ -10,6 +10,7 @@ const getServerUrl = () => {
 
 // 基础请求函数
 const request = (url, method, data, needToken = true) => {
+  console.log("请求开始", url, method, data);
   return new Promise((resolve, reject) => {
     // 构建请求头
     const header = {};
@@ -62,7 +63,7 @@ const request = (url, method, data, needToken = true) => {
         }
       },
       fail: (err) => {
-        console.error("请求失败", err);
+        console.error("请求失败", url, err);
         reject(new Error("网络错误"));
       },
       complete(res) {

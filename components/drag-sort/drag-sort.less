@@ -1,0 +1,52 @@
+.drag-sort-container {
+  position: relative;
+  width: 100%;
+  
+  &.sorting-mode {
+    .drag-item {
+      touch-action: none;
+      position: relative;
+      transition: transform 0.3s;
+      
+      &.dragging {
+        z-index: 10;
+        opacity: 0.9;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+}
+
+.drag-item {
+  width: 100%;
+  min-height: 80rpx;
+  display: block;
+  position: relative;
+  margin-bottom: 2rpx;
+  
+  &.dragging {
+    z-index: 10;
+    opacity: 0.9;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+}
+// 确保分类项样式正确
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
+  font-size: 40rpx;
+  color: #999;
+  cursor: move;
+}

@@ -25,10 +25,11 @@
       <view wx:if="{{filteredDishes.length > 0}}">
         <view class="dish-grid">
           <view class="dish-item" wx:for="{{filteredDishes}}" wx:key="id" bindtap="showDishDetail" data-dish="{{item}}">
-            <image class="dish-image" src="{{item.image.url}}" mode="aspectFill"></image>
+            <image class="dish-image" src="{{item.image.url}}" mode="aspectFill" catchtap="previewImage" data-url="{{item.image.url}}"></image>
             <view class="dish-info">
               <text class="dish-name text-ellipsis">{{item.name}}</text>
-              <!-- <text class="dish-price">¥{{item.price}}</text> -->
+              <text class="dish-ingredients">食材：牛肉、洋葱、胡萝卜</text>
+              <text class="dish-order-count">已点 42 次</text>
             </view>
             <view class="dish-action" catchtap="addToCart" data-dish="{{item}}">
               <image class="add-icon" src="/images/add.png" mode="aspectFit"></image>
@@ -68,7 +69,7 @@
   <view class="dish-detail-modal" wx:if="{{showDishDetail}}">
     <view class="dish-detail-content">
       <view class="dish-detail-close" bindtap="closeDishDetail">×</view>
-      <image class="dish-detail-image" src="{{currentDish.image.url}}" mode="aspectFill"></image>
+      <image class="dish-detail-image" src="{{currentDish.image.url}}" mode="aspectFill" bindtap="previewImage" data-url="{{currentDish.image.url}}"></image>
       <view class="dish-detail-info">
         <view class="dish-detail-name">{{currentDish.name}}</view>
         <view class="dish-detail-desc">{{currentDish.description}}</view>

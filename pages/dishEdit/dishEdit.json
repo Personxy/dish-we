@@ -3,5 +3,7 @@
   "navigationBarTextStyle": "white",
   "navigationBarBackgroundColor": "#007AFF",
   "backgroundTextStyle": "light",
-  "usingComponents": {}
-} 
+  "usingComponents": {
+    "cooking-info": "./components/cooking-info/cooking-info"
+  }
+}

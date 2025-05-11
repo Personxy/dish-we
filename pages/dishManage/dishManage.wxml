@@ -12,20 +12,36 @@
   <view class="category-manage" wx:if="{{currentTab === 'category'}}">
     <view class="manage-header">
       <view class="title">分类列表</view>
-      <view class="btn btn-primary" bindtap="showAddCategory">添加分类</view>
-    </view>
-    <view class="category-list" wx:if="{{categories.length > 0}}">
-      <view class="category-item" wx:for="{{categories}}" wx:key="id">
-        <view class="category-info">
-          <view class="category-name">{{item.name}}</view>
-          <view class="category-count">{{item.dishCount || 0}}个菜品</view>
+      <view class="header-actions">
+        <view class="btn btn-text {{isSorting ? 'active' : ''}}" bindtap="toggleSortMode">
+          {{isSorting ? '完成排序' : '排序'}}
         </view>
-        <view class="category-actions">
-          <view class="action-btn edit" bindtap="editCategory" data-category="{{item}}">编辑</view>
-          <view class="action-btn delete" bindtap="deleteCategory" data-id="{{item.id}}">删除</view>
+        <view class="btn btn-text btn-cancel" bindtap="cancelSorting" wx:if="{{isSorting}}">
+          取消排序
         </view>
+        <view class="btn btn-primary" bindtap="showAddCategory">添加分类</view>
       </view>
     </view>
+    <!-- 使用拖拽排序组件 -->
+    <drag-sort wx:if="{{categories.length > 0}}" list="{{categories}}" sorting="{{isSorting}}" bind:sort="onCategorySort" bind:itemtap="onCategoryTap" useSlot="{{true}}">
+      <block wx:for="{{categories}}" wx:key="id">
+        <view slot="item-{{index}}" class="category-item">
+          <view class="category-info">
+            <view class="category-name">{{item.name}}</view>
+            <view class="category-count">{{item.dishCount || 0}}个菜品</view>
+          </view>
+          <view class="category-actions">
+            <view class="drag-handle" wx:if="{{isSorting}}">≡</view>
+            <view class="action-btn btn-small btn-outline edit" bindtap="editCategory" data-category="{{item}}" wx:if="{{!isSorting}}">
+              编辑
+            </view>
+            <view class="action-btn btn-small btn-outline delete" bindtap="deleteCategory" data-id="{{item.id}}" wx:if="{{!isSorting}}">
+              删除
+            </view>
+          </view>
+        </view>
+      </block>
+    </drag-sort>
     <!-- 空状态 -->
     <view class="empty-state" wx:else>
       <image class="empty-icon" src="/images/empty-category.png" mode="aspectFit"></image>
@@ -45,7 +61,12 @@
       </view>
       <view class="btn btn-primary" bindtap="addDish">添加菜品</view>
     </view>
-    <view class="dish-list" wx:if="{{filteredDishes.length > 0}}">
+    <!-- 全局加载提示 -->
+    <view class="global-loading" wx:if="{{isLoading}}">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">{{loadingText || '加载中...'}}</text>
+    </view>
+    <scroll-view class="dish-list" scroll-y="true" bindscrolltolower="loadMoreDishes" wx:if="{{filteredDishes.length > 0}}">
       <view class="dish-item" wx:for="{{filteredDishes}}" wx:key="id">
         <image class="dish-image" src="{{item.image.url}}" mode="aspectFill"></image>
         <view class="dish-info">
@@ -58,7 +79,14 @@
           <view class="action-btn delete" bindtap="deleteDish" data-id="{{item.id}}">删除</view>
         </view>
       </view>
-    </view>
+      <!-- 加载更多提示 -->
+      <view class="load-more" wx:if="{{hasMore}}">
+        <text>上拉加载更多</text>
+      </view>
+      <view class="load-more" wx:else>
+        <text>没有更多数据了</text>
+      </view>
+    </scroll-view>
     <!-- 空状态 -->
     <view class="empty-state" wx:else>
       <image class="empty-icon" src="/images/empty-dish.png" mode="aspectFit"></image>

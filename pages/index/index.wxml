@@ -38,7 +38,7 @@
     <scroll-view class="recommend-scroll" scroll-x="true">
       <view class="recommend-list">
         <view class="recommend-item" wx:for="{{recommendDishes}}" wx:key="id" bindtap="showDishDetail" data-dish="{{item}}">
-          <image class="recommend-image" src="{{item.image}}" mode="aspectFill"></image>
+          <image class="recommend-image" src="{{item.image.url}}" mode="aspectFill"></image>
           <view class="recommend-info">
             <text class="recommend-name">{{item.name}}</text>
           </view>

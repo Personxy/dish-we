@@ -16,6 +16,20 @@ Page({
       id: "",
       name: "",
     },
+    // 添加分页相关数据
+    pageSize: 10,
+    currentPage: 1,
+    hasMore: true,
+    isLoading: false,
+    loadingText: "",
+    loadingTimer: null,
+    // 排序相关
+    isSorting: false, // 是否处于排序模式
+    dragStartY: 0, // 拖拽开始的Y坐标
+    dragStartIndex: -1, // 拖拽开始的索引
+    dragItemHeight: 0, // 拖拽项的高度
+    dragCurrentIndex: -1, // 当前拖拽项的索引
+    categoriesBeforeSort: [], // 排序前的分类列表备份
   },
 
   // onLoad: function () {
@@ -66,38 +80,129 @@ Page({
       });
   },
 
+  // 显示加载提示
+  showLoading: function (text) {
+    // 清除之前的计时器
+    if (this.data.loadingTimer) {
+      clearTimeout(this.data.loadingTimer);
+    }
+
+    // 设置一个300ms的延迟，如果加载很快就不显示loading
+    const timer = setTimeout(() => {
+      this.setData({
+        isLoading: true,
+        loadingText: text,
+      });
+    }, 300);
+
+    this.setData({
+      loadingTimer: timer,
+    });
+  },
+
+  // 隐藏加载提示
+  hideLoading: function () {
+    // 清除计时器
+    if (this.data.loadingTimer) {
+      clearTimeout(this.data.loadingTimer);
+    }
+
+    this.setData({
+      isLoading: false,
+      loadingText: "",
+      loadingTimer: null,
+    });
+  },
+
   // 加载菜品数据
-  loadDishes: function () {
-    // 使用 API 获取菜品数据
+  loadDishes: function (isLoadMore = false, categoryId = null) {
+    if (!isLoadMore) {
+      this.setData({
+        currentPage: 1,
+        hasMore: true,
+      });
+
+      // 显示加载提示
+      this.showLoading("获取菜品中...");
+    } else {
+      // 加载更多时显示不同的提示
+      this.showLoading("加载更多菜品...");
+    }
+
+    // 构建查询参数
+    const params = {
+      page: this.data.currentPage,
+      limit: this.data.pageSize,
+      sort: "createdAt:desc",
+    };
+
+    // 如果直接传入了分类ID，优先使用传入的
+    if (categoryId) {
+      params.category = categoryId;
+    }
+    // 否则使用当前选中的分类
+    else if (this.data.categoryIndex > 0) {
+      const selectedCategoryId = this.data.categories[this.data.categoryIndex - 1].id;
+      params.category = selectedCategoryId;
+    }
+
+    // 调用菜品API
     dishes
-      .getDishes()
+      .getDishes(params)
       .then((res) => {
         if (res.success) {
           const dishesData = res.data || [];
-
-          // 更新全局数据
-          app.globalData.dishes = dishesData;
+          const pagination = res.pagination || {};
 
           // 处理菜品数据，确保字段一致性
           const processedDishes = dishesData.map((dish) => ({
             ...dish,
-            id: dish._id, // 确保 id 字段一致
-            categoryId: dish.category, // 确保 categoryId 字段一致
+            id: dish._id, // 确保id字段一致
+            categoryId: dish.category, // 确保categoryId字段一致
           }));
 
+          // 更新全局数据
+          if (!isLoadMore) {
+            app.globalData.dishes = processedDishes;
+          }
+
+          // 判断是否还有更多数据
+          const hasMore = pagination.page < pagination.pages;
+
           this.setData({
-            dishes: processedDishes,
-            filteredDishes: processedDishes, // 默认显示所有菜品
+            dishes: isLoadMore ? [...this.data.dishes, ...processedDishes] : processedDishes,
+            filteredDishes: isLoadMore ? [...this.data.filteredDishes, ...processedDishes] : processedDishes,
+            hasMore: hasMore,
+          });
+
+          // 隐藏加载提示
+          this.hideLoading();
+        } else {
+          this.hideLoading();
+          wx.showToast({
+            title: "获取菜品失败",
+            icon: "none",
           });
         }
       })
       .catch((err) => {
         console.error("获取菜品失败", err);
+        this.hideLoading();
         wx.showToast({
           title: "获取菜品失败",
           icon: "none",
         });
       });
+  },
+
+  // 加载更多菜品
+  loadMoreDishes: function () {
+    if (this.data.hasMore && !this.data.isLoading) {
+      this.setData({
+        currentPage: this.data.currentPage + 1,
+      });
+      this.loadDishes(true);
+    }
   },
 
   // 切换标签页
@@ -121,22 +226,12 @@ Page({
 
   // 根据分类筛选菜品
   filterDishes: function (categoryIndex) {
-    const { dishes, categories } = this.data;
-
-    let filteredDishes = [];
-
-    if (categoryIndex == 0) {
-      // 全部分类
-      filteredDishes = dishes;
-    } else {
-      // 按分类筛选
-      const categoryId = categories[categoryIndex - 1].id;
-      filteredDishes = dishes.filter((dish) => dish.categoryId === categoryId);
-    }
-
+    // 切换分类时重置分页并重新加载数据
     this.setData({
-      filteredDishes,
+      currentPage: 1,
+      hasMore: true,
     });
+    this.loadDishes();
   },
 
   // 获取分类名称
@@ -446,6 +541,160 @@ Page({
             });
         }
       },
+    });
+  },
+
+  // 切换排序模式
+  toggleSortMode: function () {
+    if (this.data.isSorting) {
+      // 如果当前是排序模式，则保存排序结果
+      this.saveCategoryOrder();
+    } else {
+      // 如果当前不是排序模式，则进入排序模式
+      // 备份当前分类列表
+      this.setData({
+        categoriesBeforeSort: JSON.parse(JSON.stringify(this.data.categories)),
+        isSorting: true,
+      });
+    }
+  },
+  // 取消排序
+  cancelSorting: function () {
+    // 恢复原来的排序
+    this.setData({
+      categories: this.data.categoriesBeforeSort,
+      isSorting: false,
+    });
+
+    wx.showToast({
+      title: "已取消排序",
+      icon: "none",
+    });
+  },
+  // 分类排序变化处理
+  onCategorySort: function (e) {
+    // 更新分类列表
+    this.setData({
+      categories: e.detail.list,
+    });
+  },
+
+  // 分类项点击处理
+  onCategoryTap: function (e) {
+    const category = e.detail.item;
+    // 可以在这里处理分类项的点击事件
+  },
+
+  // 保存分类排序
+  saveCategoryOrder: function () {
+    // 显示加载提示
+    wx.showLoading({
+      title: "保存排序中...",
+    });
+
+    // 构建排序数据
+    const orders = this.data.categories.map((category, index) => ({
+      id: category.id,
+      sortOrder: index,
+    }));
+
+    // 调用API保存排序
+    categories
+      .updateCategoryOrder(orders)
+      .then((res) => {
+        wx.hideLoading();
+        if (res.success) {
+          this.setData({
+            isSorting: false,
+          });
+
+          wx.showToast({
+            title: "排序已保存",
+            icon: "success",
+          });
+
+          // 刷新分类数据
+          this.loadCategoriesAndDishes();
+        } else {
+          throw new Error(res.error?.message || "保存排序失败");
+        }
+      })
+      .catch((err) => {
+        wx.hideLoading();
+
+        // 如果保存失败，恢复原来的排序
+        this.setData({
+          categories: this.data.categoriesBeforeSort,
+          isSorting: false,
+        });
+
+        wx.showToast({
+          title: err.message || "保存排序失败",
+          icon: "none",
+        });
+      });
+  },
+
+  // 拖拽开始
+  dragStart: function (e) {
+    if (!this.data.isSorting) return;
+
+    const index = e.currentTarget.dataset.index;
+    const touch = e.touches[0];
+
+    // 获取元素高度
+    const query = wx.createSelectorQuery();
+    query.select(".category-item").boundingClientRect();
+    query.exec((res) => {
+      if (res && res[0]) {
+        this.setData({
+          dragStartY: touch.clientY,
+          dragStartIndex: index,
+          dragCurrentIndex: index,
+          dragItemHeight: res[0].height,
+        });
+      }
+    });
+  },
+
+  // 拖拽移动
+  dragMove: function (e) {
+    if (!this.data.isSorting || this.data.dragStartIndex === -1) return;
+
+    const touch = e.touches[0];
+    const moveY = touch.clientY - this.data.dragStartY;
+    const moveIndex = Math.round(moveY / this.data.dragItemHeight);
+
+    let newIndex = this.data.dragStartIndex + moveIndex;
+
+    // 确保新索引在有效范围内
+    if (newIndex < 0) newIndex = 0;
+    if (newIndex >= this.data.categories.length) newIndex = this.data.categories.length - 1;
+
+    if (newIndex !== this.data.dragCurrentIndex) {
+      // 更新列表顺序
+      let categories = [...this.data.categories];
+      const item = categories[this.data.dragStartIndex];
+
+      // 从原位置移除
+      categories.splice(this.data.dragStartIndex, 1);
+      // 插入到新位置
+      categories.splice(newIndex, 0, item);
+
+      this.setData({
+        categories: categories,
+        dragCurrentIndex: newIndex,
+      });
+    }
+  },
+
+  // 拖拽结束
+  dragEnd: function () {
+    if (!this.data.isSorting) return;
+
+    this.setData({
+      dragStartIndex: -1,
+      dragCurrentIndex: -1,
     });
   },
 });

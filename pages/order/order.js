@@ -374,4 +374,12 @@ Page({
       url: "/pages/cart/cart",
     });
   },
+  // 预览图片
+  previewImage: function(e) {
+    const url = e.currentTarget.dataset.url;
+    wx.previewImage({
+      current: url, // 当前显示图片的链接
+      urls: [url] // 需要预览的图片链接列表
+    });
+  },
 });

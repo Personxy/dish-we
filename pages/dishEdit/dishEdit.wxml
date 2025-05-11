@@ -1,62 +1,92 @@
 <view class="dish-edit-container">
-  <view class="form-container">
-    <!-- 基本信息部分 -->
-    <view class="form-section">
-      <view class="section-title">基本信息</view>
-      
-      <!-- 菜品图片 -->
-      <view class="form-item">
-        <view class="form-label">菜品图片</view>
-        <view class="image-uploader" bindtap="chooseImage">
-          <image wx:if="{{tempImagePath || dishForm.image}}" class="dish-image" src="{{tempImagePath || dishForm.image.url}}" mode="aspectFill"></image>
-          <view wx:else class="upload-placeholder">
-            <image class="upload-icon" src="/images/upload.png" mode="aspectFit"></image>
-            <text>点击上传</text>
-          </view>
-        </view>
-        <view wx:if="{{isUploading}}" class="upload-status">图片上传中...</view>
-      </view>
-      
-      <!-- 菜品名称 -->
-      <view class="form-item">
-        <view class="form-label">菜品名称</view>
-        <input class="form-input" type="text" placeholder="请输入菜品名称" value="{{dishForm.name}}" bindinput="onNameInput"/>
-      </view>
-      
-      <!-- 其余部分保持不变 -->
-      
-      <!-- 菜品分类 -->
-      <view class="form-item">
-        <view class="form-label">菜品分类</view>
-        <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categoryNames}}">
-          <view class="form-picker">
-            <text>{{categoryNames[categoryIndex] || '请选择分类'}}</text>
-            <image class="down-icon" src="/images/down.png" mode="aspectFit"></image>
-          </view>
-        </picker>
-      </view>
-      
-      <!-- 菜品价格 -->
-      <!-- <view class="form-item">
-        <view class="form-label">菜品价格</view>
-        <view class="price-input-wrapper">
-          <text class="price-symbol">¥</text>
-          <input class="form-input price-input" type="digit" placeholder="0.00" value="{{dishForm.price}}" bindinput="onPriceInput"/>
-        </view>
-      </view> -->
+  <!-- Tab 栏 -->
+  <view class="tab-container">
+    <view class="tab-item {{activeTab === 'basic' ? 'active' : ''}}" bindtap="switchTab" data-tab="basic">
+      基本信息
     </view>
-    
-    <!-- 菜品描述部分 -->
-    <view class="form-section">
-      <view class="section-title">菜品描述</view>
-      
-      <view class="form-item">
-        <textarea class="form-textarea" placeholder="请输入菜品描述" value="{{dishForm.description}}" bindinput="onDescriptionInput" maxlength="200"></textarea>
-        <view class="textarea-counter">{{descriptionLength}}/200</view>
+    <view class="tab-item {{activeTab === 'cooking' ? 'active' : ''}}" bindtap="switchTab" data-tab="cooking">
+      烹饪信息
+    </view>
+  </view>
+  <view class="form-container">
+    <!-- 基本信息 Tab -->
+    <view class="tab-content" hidden="{{activeTab !== 'basic'}}">
+      <view class="form-section">
+        <view class="section-title">基本信息</view>
+        <!-- 菜品图片 -->
+        <view class="form-item">
+          <view class="form-label">菜品图片</view>
+          <view class="image-uploader" bindtap="chooseImage">
+            <image wx:if="{{tempImagePath || dishForm.image}}" class="dish-image" src="{{tempImagePath || dishForm.image.url}}" mode="aspectFill" catchtap="previewImage"></image>
+            <view wx:if="{{tempImagePath || dishForm.image}}" class="image-delete" catchtap="deleteImage">
+              ×
+            </view>
+            <view wx:else class="upload-placeholder">
+              <image class="upload-icon" src="/images/upload.png" mode="aspectFit"></image>
+              <text>点击上传</text>
+            </view>
+          </view>
+          <view wx:if="{{isUploading}}" class="upload-status">图片上传中...</view>
+        </view>
+        <!-- 菜品名称 -->
+        <view class="form-item">
+          <view class="form-label">菜品名称</view>
+          <input class="form-input" type="text" placeholder="请输入菜品名称" value="{{dishForm.name}}" bindinput="onNameInput" />
+        </view>
+        <!-- 菜品分类 -->
+        <view class="form-item">
+          <view class="form-label">菜品分类</view>
+          <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categories}}" range-key="name">
+            <view class="form-picker">
+              <text>{{categories[categoryIndex].name || '请选择分类'}}</text>
+              <image class="down-icon" src="/images/down.png" mode="aspectFit"></image>
+            </view>
+          </picker>
+        </view>
+        <!-- 菜品描述 -->
+        <view class="form-item">
+          <view class="form-label">菜品描述</view>
+          <textarea class="form-textarea" placeholder="请输入菜品描述" value="{{dishForm.description}}" bindinput="onDescriptionInput" maxlength="200"></textarea>
+          <view class="textarea-counter">{{descriptionLength}}/200</view>
+        </view>
+      </view>
+    </view>
+    <!-- 烹饪信息 Tab -->
+    <view class="tab-content" hidden="{{activeTab !== 'cooking'}}">
+      <!-- 引入烹饪信息组件 -->
+      <cooking-info difficulty="{{dishForm.difficulty}}" difficultyText="{{difficultyText}}" ingredients="{{dishForm.ingredients}}" unitOptions="{{unitOptions}}" bindsetDifficulty="setDifficulty" bindshowIngredientModal="showIngredientModal" binddeleteIngredient="deleteIngredient" bindeditIngredient="editIngredient"></cooking-info>
+    </view>
+  </view>
+  <!-- 食材添加弹窗 -->
+  <view class="ingredient-modal" wx:if="{{showIngredientModal}}">
+    <view class="modal-mask" bindtap="hideIngredientModal"></view>
+    <view class="modal-content">
+      <view class="modal-title">添加食材</view>
+      <view class="modal-form">
+        <view class="modal-form-item">
+          <view class="modal-form-label">食材名称</view>
+          <input class="modal-form-input" placeholder="请输入食材名称" value="{{ingredientForm.name}}" bindinput="onIngredientNameInput" />
+        </view>
+        <view class="modal-form-item">
+          <view class="modal-form-label">用量</view>
+          <input class="modal-form-input" type="digit" placeholder="请输入用量" value="{{ingredientForm.amount}}" bindinput="onIngredientAmountInput" />
+        </view>
+        <view class="modal-form-item">
+          <view class="modal-form-label">单位</view>
+          <picker bindchange="onIngredientUnitChange" value="{{unitIndex}}" range="{{unitOptions}}">
+            <view class="modal-form-picker">
+              <text>{{unitOptions[unitIndex] || '请选择单位'}}</text>
+              <image class="down-icon" src="/images/down.png" mode="aspectFit"></image>
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="modal-btns">
+        <view class="modal-btn cancel" bindtap="hideIngredientModal">取消</view>
+        <view class="modal-btn confirm" bindtap="addIngredient">确定</view>
       </view>
     </view>
   </view>
-  
   <!-- 底部按钮 -->
   <view class="bottom-btns">
     <view class="btn btn-outline" bindtap="cancel">取消</view>

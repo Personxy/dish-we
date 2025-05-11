@@ -1,0 +1,49 @@
+<view class="cooking-info">
+  <view class="form-section">
+    <view class="section-title">烹饪信息</view>
+    
+    <!-- 烹饪难度 -->
+    <view class="form-item">
+      <view class="form-label">烹饪难度</view>
+      <view class="difficulty-selector">
+        <view class="star-container">
+          <view class="star {{difficulty >= 1 ? 'active' : ''}}" bindtap="onSetDifficulty" data-level="1">★</view>
+          <view class="star {{difficulty >= 2 ? 'active' : ''}}" bindtap="onSetDifficulty" data-level="2">★</view>
+          <view class="star {{difficulty >= 3 ? 'active' : ''}}" bindtap="onSetDifficulty" data-level="3">★</view>
+          <view class="star {{difficulty >= 4 ? 'active' : ''}}" bindtap="onSetDifficulty" data-level="4">★</view>
+          <view class="star {{difficulty >= 5 ? 'active' : ''}}" bindtap="onSetDifficulty" data-level="5">★</view>
+        </view>
+        <text class="difficulty-text">{{difficultyText[(difficulty || 1) - 1] || '请选择难度'}}</text>
+      </view>
+    </view>
+    
+    <!-- 食材部分 -->
+    <view class="form-item">
+      <view class="form-label">食材清单 <text class="optional-text">(选填)</text></view>
+      
+      <!-- 食材列表 -->
+      <view class="ingredients-list">
+        <view class="ingredient-item" wx:for="{{ingredients || []}}" wx:key="index">
+          <view class="ingredient-content">
+            <view class="ingredient-name">{{item.name}}</view>
+            <view class="ingredient-amount">{{item.amount}} {{item.unit}}</view>
+          </view>
+          <view class="ingredient-actions">
+            <view class="ingredient-edit" bindtap="onEditIngredient" data-index="{{index}}">✎</view>
+            <view class="ingredient-delete" bindtap="onDeleteIngredient" data-index="{{index}}">×</view>
+          </view>
+        </view>
+        
+        <!-- 无食材提示 -->
+        <view class="no-ingredients" wx:if="{{!ingredients || ingredients.length === 0}}">
+          暂无食材，点击下方按钮添加
+        </view>
+      </view>
+      
+      <!-- 添加食材按钮 -->
+      <view class="add-ingredient-btn" bindtap="onShowIngredientModal">
+        <text class="add-icon">+</text> 添加食材
+      </view>
+    </view>
+  </view>
+</view>

@@ -3,6 +3,7 @@ import { dishes, categories } from "../../utils/api";
 
 Page({
   data: {
+    activeTab: "basic", // 当前激活的 Tab
     isEditing: false, // 是否是编辑模式
     dishId: "", // 菜品ID
     categoryIndex: 0, // 分类选择器的索引
@@ -10,6 +11,33 @@ Page({
     tempImagePath: "", // 临时图片路径
     descriptionLength: 0, // 描述文字长度
     isUploading: false, // 图片上传状态
+    showIngredientModal: false,
+    unitOptions: [
+      "克",
+      "千克",
+      "毫升",
+      "升",
+      "勺",
+      "茶匙",
+      "汤匙",
+      "杯",
+      "个",
+      "只",
+      "条",
+      "片",
+      "根",
+      "把",
+      "束",
+      "瓣",
+      "适量",
+    ],
+    unitIndex: 0,
+    ingredientForm: {
+      name: "",
+      amount: "",
+      unit: "克",
+    },
+
     dishForm: {
       // 菜品表单数据
       name: "",
@@ -17,12 +45,23 @@ Page({
       price: "",
       image: "",
       description: "",
+      difficulty: 1,
+      ingredients: [],
     },
+    categories: [], // 分类列表
+    difficultyText: ["简单", "较简单", "中等", "较难", "困难"],
+  },
+
+  // 切换 Tab
+  switchTab: function (e) {
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({
+      activeTab: tab,
+    });
   },
 
   onLoad: function (options) {
     // 加载分类数据
-    this.loadCategories();
 
     // 如果有ID参数，则为编辑模式
     if (options.id) {
@@ -78,25 +117,23 @@ Page({
         title: "添加菜品",
       });
     }
+    this.loadCategories();
   },
 
   // 设置菜品数据到表单
   setDishData: function (dish) {
-    // 获取分类索引
-    const categories = this.data.categories || [];
-    const category = categories.find((c) => c._id === dish.category || c._id === dish.categoryId);
-    const categoryIndex = category ? this.data.categoryNames.indexOf(category.name) : 0;
-
     this.setData({
       tempImagePath: dish.image.url || "", // 确保设置了 tempImagePath
-      categoryIndex: categoryIndex > -1 ? categoryIndex : 0,
       descriptionLength: dish.description ? dish.description.length : 0,
       dishForm: {
         name: dish.name || "",
-        categoryId: dish.category || dish.categoryId || "", // 兼容两种字段名
+        categoryId: dish.category._id || "", // 兼容两种字段名
+        categoryName: dish.category.name, // 添加分类名称
         price: dish.price || "",
         image: dish.image.url || "",
         description: dish.description || "",
+        difficulty: dish.difficulty || 1,
+        ingredients: dish.ingredients || [],
       },
     });
   },
@@ -130,11 +167,11 @@ Page({
           }
 
           const categoryNames = categories.map((item) => item.name);
-
+          const categoryIndex = categories.findIndex((item) => item._id === this.data.dishForm.categoryId);
           this.setData({
             categories: categories,
+            categoryIndex: categoryIndex,
             categoryNames: categoryNames,
-            "dishForm.categoryId": categories[0]._id, // 使用 _id 字段
           });
         } else {
           wx.showToast({
@@ -205,15 +242,168 @@ Page({
       },
     });
   },
+  // 预览图片（放大查看）
+  previewImage: function () {
+    const url = this.data.tempImagePath || (this.data.dishForm.image ? this.data.dishForm.image.url : "");
+    if (url) {
+      wx.previewImage({
+        urls: [url],
+        current: url,
+      });
+    }
+  },
+  // 删除图片
+  deleteImage: function (e) {
+    // 不再需要阻止事件冒泡，因为我们在 wxml 中使用了 catchtap
+    // e.stopPropagation();
 
+    wx.showModal({
+      title: "提示",
+      content: "确定要删除图片吗？",
+      success: (res) => {
+        if (res.confirm) {
+          this.setData({
+            tempImagePath: "",
+            "dishForm.image": null,
+          });
+        }
+      },
+    });
+  },
+  // 设置难度
+  setDifficulty: function (e) {
+    // 从事件对象中获取 level 值
+    const level = e.detail.level;
+
+    // 确保 level 是有效的数字
+    if (!isNaN(level) && level > 0 && level <= 5) {
+      this.setData({
+        "dishForm.difficulty": level,
+      });
+    }
+  },
+  // 显示食材弹窗
+  showIngredientModal: function () {
+    this.setData({
+      showIngredientModal: true,
+      unitIndex: 0,
+      ingredientForm: {
+        name: "",
+        amount: "",
+        unit: "克",
+      },
+    });
+  },
+  editIngredient: function (e) {
+    const { index, ingredient } = e.detail;
+
+    // 找到对应单位的索引
+    const unitIndex = this.data.unitOptions.findIndex((unit) => unit === ingredient.unit);
+
+    this.setData({
+      showIngredientModal: true,
+      editingIngredientIndex: index,
+      ingredientForm: {
+        name: ingredient.name,
+        amount: ingredient.amount,
+        unit: ingredient.unit,
+      },
+      unitIndex: unitIndex !== -1 ? unitIndex : 0,
+    });
+  },
+  // 隐藏食材弹窗
+  hideIngredientModal: function () {
+    this.setData({
+      showIngredientModal: false,
+    });
+  },
+
+  // 食材名称输入
+  onIngredientNameInput: function (e) {
+    this.setData({
+      "ingredientForm.name": e.detail.value,
+    });
+  },
+
+  // 食材用量输入
+  onIngredientAmountInput: function (e) {
+    this.setData({
+      "ingredientForm.amount": e.detail.value,
+    });
+  },
+
+  // 食材单位选择
+  onIngredientUnitChange: function (e) {
+    const index = e.detail.value;
+    this.setData({
+      unitIndex: index,
+      "ingredientForm.unit": this.data.unitOptions[index],
+    });
+  },
+
+  // 添加食材
+  addIngredient: function () {
+    const { name, amount, unit } = this.data.ingredientForm;
+    const editingIndex = this.data.editingIngredientIndex;
+
+    // 验证
+    if (!name.trim()) {
+      wx.showToast({
+        title: "请输入食材名称",
+        icon: "none",
+      });
+      return;
+    }
+
+    if (!amount) {
+      wx.showToast({
+        title: "请输入食材用量",
+        icon: "none",
+      });
+      return;
+    }
+
+    const ingredients = this.data.dishForm.ingredients || [];
+    const newIngredient = {
+      name: name.trim(),
+      amount: parseFloat(amount),
+      unit: unit,
+    };
+
+    // 如果是编辑模式
+    if (editingIndex !== undefined && editingIndex !== null) {
+      ingredients[editingIndex] = newIngredient;
+    } else {
+      // 添加模式
+      ingredients.push(newIngredient);
+    }
+
+    this.setData({
+      "dishForm.ingredients": ingredients,
+      showIngredientModal: false,
+      editingIngredientIndex: null,
+    });
+  },
+
+  // 删除食材
+  deleteIngredient: function (e) {
+    const index = e.currentTarget.dataset.index;
+    const ingredients = this.data.dishForm.ingredients;
+    ingredients.splice(index, 1);
+
+    this.setData({
+      "dishForm.ingredients": ingredients,
+    });
+  },
   // 分类选择变化
   onCategoryChange: function (e) {
     const index = e.detail.value;
-    const categories = this.data.categories || [];
+    const category = this.data.categories[index];
 
     this.setData({
       categoryIndex: index,
-      "dishForm.categoryId": categories[index]._id, // 使用 _id 字段
+      "dishForm.categoryId": category._id,
+      "dishForm.categoryName": category.name,
     });
   },
 
@@ -456,6 +646,8 @@ Page({
     // 准备提交的数据
     const dishData = {
       name: dishForm.name,
+      difficulty: this.data.dishForm.difficulty,
+      ingredients: this.data.dishForm.ingredients || [],
       category: dishForm.categoryId, // 使用 category 字段
       // price: parseFloat(dishForm.price),
       description: dishForm.description,

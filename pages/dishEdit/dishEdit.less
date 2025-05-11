@@ -1,0 +1,348 @@
+// 变量定义
+@primary-color: var(--primary-color);
+@gray-4: var(--gray-4);
+@gray-5: var(--gray-5);
+@gray-6: var(--gray-6);
+
+// 混合器
+.flex-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-column-center() {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// 主容器
+.dish-edit-container {
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  padding-bottom: 120rpx;
+  
+  // Tab 栏样式
+  .tab-container {
+    display: flex;
+    background-color: #fff;
+    border-bottom: 1rpx solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    
+    .tab-item {
+      flex: 1;
+      height: 80rpx;
+      line-height: 80rpx;
+      text-align: center;
+      font-size: 28rpx;
+      color: #666;
+      position: relative;
+      
+      &.active {
+        color: @primary-color;
+        font-weight: 500;
+        
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40rpx;
+          height: 4rpx;
+          background-color: @primary-color;
+          border-radius: 2rpx;
+        }
+      }
+    }
+  }
+  
+  // 表单容器
+  .form-container {
+    padding: 30rpx;
+    
+    // Tab 内容
+    .tab-content {
+      &[hidden] {
+        display: none;
+      }
+    }
+    
+    // 表单部分
+    .form-section {
+      background-color: #fff;
+      border-radius: 12rpx;
+      padding: 30rpx;
+      margin-bottom: 30rpx;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+      
+      .section-title {
+        font-size: 32rpx;
+        font-weight: 600;
+        margin-bottom: 30rpx;
+        color: @gray-6;
+        
+        .optional-text {
+          font-size: 24rpx;
+          color: #999;
+          font-weight: normal;
+        }
+      }
+      
+      .form-item {
+        margin-bottom: 30rpx;
+        position: relative;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        .form-label {
+          font-size: 28rpx;
+          color: @gray-5;
+          margin-bottom: 20rpx;
+        }
+        
+        .form-input {
+          width: 100%;
+          height: 80rpx;
+          box-sizing: border-box;
+          padding: 0 20rpx;
+          font-size: 28rpx;
+          border: 1rpx solid #f0f0f0;
+          border-radius: 8rpx;
+          background-color: #fff;
+        }
+        
+        .form-picker {
+          width: 100%;
+          height: 80rpx;
+          box-sizing: border-box;
+          padding: 0 20rpx;
+          font-size: 28rpx;
+          border: 1rpx solid #f0f0f0;
+          border-radius: 8rpx;
+          background-color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          
+          .down-icon {
+            width: 32rpx;
+            height: 32rpx;
+          }
+        }
+        
+        // 价格输入框
+        .price-input-wrapper {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: 80rpx;
+          box-sizing: border-box;
+          border: 1rpx solid #f0f0f0;
+          border-radius: 8rpx;
+          background-color: #fff;
+          padding: 0 20rpx;
+          
+          .price-symbol {
+            font-size: 28rpx;
+            color: @gray-6;
+            margin-right: 10rpx;
+          }
+          
+          .price-input {
+            border: none;
+            padding: 0;
+            height: 76rpx;
+          }
+        }
+        
+        // 图片上传
+        .image-uploader {
+          width: 200rpx;
+          height: 200rpx;
+          border: 1rpx dashed #ddd;
+          border-radius: 8rpx;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: #f9f9f9;
+          position: relative;
+          .dish-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 8rpx;
+          }
+          .image-delete {
+            position: absolute;
+            top: -16rpx;
+            right: -16rpx;
+            width: 40rpx;
+            height: 40rpx;
+            line-height: 36rpx;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 28rpx;
+            z-index: 10;
+          }
+          .upload-placeholder {
+            .flex-column-center();
+            color: @gray-4;
+            font-size: 26rpx;
+            
+            .upload-icon {
+              width: 60rpx;
+              height: 60rpx;
+              margin-bottom: 10rpx;
+            }
+          }
+        }
+        
+        // 文本域
+        .form-textarea {
+          width: 100%;
+          height: 200rpx;
+          padding: 20rpx;
+          box-sizing: border-box;
+          font-size: 28rpx;
+          border: 1rpx solid #f0f0f0;
+          border-radius: 8rpx;
+          background-color: #fff;
+        }
+        
+        .textarea-counter {
+          position: absolute;
+          right: 20rpx;
+          bottom: 20rpx;
+          font-size: 24rpx;
+          color: @gray-4;
+        }
+      }
+    }
+  }
+  
+  // 底部按钮
+  .bottom-btns {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20rpx 30rpx;
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    z-index: 10;
+    
+    .btn {
+      width: 46%;
+      height: 80rpx;
+      line-height: 80rpx;
+      text-align: center;
+      border-radius: 40rpx;
+      font-size: 30rpx;
+      font-weight: 500;
+    }
+  }
+}
+
+// 食材弹窗
+.ingredient-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  
+  .modal-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border-top-left-radius: 20rpx;
+    border-top-right-radius: 20rpx;
+    padding: 30rpx;
+    box-sizing: border-box;
+    
+    .modal-title {
+      text-align: center;
+      font-size: 32rpx;
+      font-weight: 500;
+      margin-bottom: 30rpx;
+    }
+    
+    .modal-form {
+      .modal-form-item {
+        margin-bottom: 20rpx;
+        
+        .modal-form-label {
+          font-size: 28rpx;
+          color: #333;
+          margin-bottom: 10rpx;
+        }
+        
+        .modal-form-input {
+          height: 80rpx;
+          border: 1rpx solid #eee;
+          border-radius: 8rpx;
+          padding: 0 20rpx;
+          font-size: 28rpx;
+        }
+        
+        .modal-form-picker {
+          height: 80rpx;
+          border: 1rpx solid #eee;
+          border-radius: 8rpx;
+          padding: 0 20rpx;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+    }
+    
+    .modal-btns {
+      display: flex;
+      margin-top: 30rpx;
+      
+      .modal-btn {
+        flex: 1;
+        height: 80rpx;
+        line-height: 80rpx;
+        text-align: center;
+        border-radius: 8rpx;
+        font-size: 28rpx;
+        
+        &.cancel {
+          background-color: #f5f5f5;
+          color: #666;
+          margin-right: 20rpx;
+        }
+        
+        &.confirm {
+          background-color: @primary-color;
+          color: #fff;
+        }
+      }
+    }
+  }
+}

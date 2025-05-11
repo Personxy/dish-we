@@ -1,0 +1,6 @@
+<view class="drag-sort-container {{sorting ? 'sorting-mode' : ''}}">
+  <view wx:for="{{list}}" wx:key="idKey" class="drag-item {{dragStartIndex === index ? 'dragging' : ''}}" data-index="{{index}}" bindtouchstart="dragStart" bindtouchmove="dragMove" bindtouchend="dragEnd" bindtap="onItemTap" style="{{dragStartIndex === index ? draggingStyle : itemStyles[index]}}">
+    <!-- 使用具名插槽允许自定义每个项目的内容 -->
+    <slot name="item-{{index}}"></slot>
+  </view>
+</view>
