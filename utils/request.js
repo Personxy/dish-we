@@ -39,7 +39,7 @@ const request = (url, method, data, needToken = true) => {
       data,
       header,
       success: (res) => {
-        if (res.statusCode === 200) {
+        if (res.statusCode === 200 || res.statusCode === 201) {
           resolve(res.data);
         } else if (res.statusCode === 401) {
           // token失效，清除本地token缓存

@@ -658,7 +658,6 @@ Page({
 
     // 根据是否编辑模式调用不同的API
     const savePromise = isEditing ? dishes.updateDish(dishId, dishData) : dishes.createDish(dishData);
-
     savePromise
       .then((res) => {
         if (res.success) {
@@ -669,7 +668,15 @@ Page({
             icon: "success",
             success: () => {
               setTimeout(() => {
-                wx.navigateBack();
+                // 如果是创建菜品，直接跳转到菜品管理页面
+                if (!isEditing) {
+                  wx.redirectTo({
+                    url: "/pages/dishManage/dishManage?tab=dish",
+                  });
+                } else {
+                  // 如果是编辑菜品，返回上一页
+                  wx.navigateBack();
+                }
               }, 1500);
             },
           });

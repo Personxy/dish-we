@@ -28,8 +28,8 @@
             <image class="dish-image" src="{{item.image.url}}" mode="aspectFill" catchtap="previewImage" data-url="{{item.image.url}}"></image>
             <view class="dish-info">
               <text class="dish-name text-ellipsis">{{item.name}}</text>
-              <text class="dish-ingredients">食材：牛肉、洋葱、胡萝卜</text>
-              <text class="dish-order-count">已点 42 次</text>
+              <text class="dish-ingredients">食材：{{item.ingredientsText || '暂无'}}</text>
+              <text class="dish-order-count">已点 {{item.orderCount || 0}} 次</text>
             </view>
             <view class="dish-action" catchtap="addToCart" data-dish="{{item}}">
               <image class="add-icon" src="/images/add.png" mode="aspectFit"></image>
