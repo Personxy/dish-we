@@ -1,5 +1,5 @@
 const app = getApp();
-import api from "../../utils/api";
+import { dishes } from "../../utils/api";
 
 Page({
   data: {
@@ -22,8 +22,9 @@ Page({
     console.log(item.pagePath);
     console.log(item.text);
   },
+  onShow() {},
   onLoad() {
-    // 检查是否有用户信息
+    this.getRecommendDishes();
     console.log(app.globalData.userInfo);
     if (app.globalData.userInfo) {
       // 如果 app.globalData.userInfo 已经有值，直接使用
@@ -55,7 +56,6 @@ Page({
     }
 
     // 获取推荐菜品
-    this.getRecommendDishes();
   },
 
   onShow() {
@@ -64,7 +64,7 @@ Page({
 
     // 每次进入首页时重新获取用户信息
     app.getUserInfo();
-    
+
     // 获取最新的用户信息
     const userInfo = wx.getStorageSync("userInfo");
     if (userInfo) {
@@ -76,18 +76,18 @@ Page({
   },
 
   // 添加下拉刷新函数
-  onPullDownRefresh: function() {
-    console.log('下拉刷新触发');
-    
+  onPullDownRefresh: function () {
+    console.log("下拉刷新触发");
+
     // 显示导航条加载动画
     wx.showNavigationBarLoading();
-    
+
     // 重新获取用户信息
     app.getUserInfo();
-    
+
     // 重新获取推荐菜品
     this.getRecommendDishes();
-    
+
     // 获取最新的用户信息并更新页面
     const userInfo = wx.getStorageSync("userInfo");
     if (userInfo) {
@@ -97,22 +97,22 @@ Page({
       });
       this.checkIsAdmin();
     }
-    
+
     // 更新购物车数量
     this.updateCartCount();
-    
+
     // 模拟网络请求延迟，0.5秒后停止下拉刷新动画
     setTimeout(() => {
       // 隐藏导航条加载动画
       wx.hideNavigationBarLoading();
       // 停止下拉刷新动画
       wx.stopPullDownRefresh();
-      
+
       // 提示用户刷新成功
       wx.showToast({
-        title: '刷新成功',
-        icon: 'success',
-        duration: 1000
+        title: "刷新成功",
+        icon: "success",
+        duration: 1000,
       });
     }, 500);
   },
@@ -123,7 +123,14 @@ Page({
       console.error("更新用户信息失败", err);
     });
   },
-
+  // 预览图片（放大查看）
+  previewImage: function (e) {
+    const url = e.currentTarget.dataset.url;
+    wx.previewImage({
+      current: url, // 当前显示图片的链接
+      urls: [url], // 需要预览的图片链接列表
+    });
+  },
   // 检查是否为管理员
   checkIsAdmin() {
     // 这里可以根据实际需求来判断是否为管理员
@@ -143,10 +150,17 @@ Page({
   getRecommendDishes() {
     // 这里应该从服务器获取推荐菜品
     // 示例：从app.globalData中获取前3个菜品作为推荐
-    const recommendDishes = app.globalData.dishes.slice(0, 3);
-    this.setData({
-      recommendDishes,
-    });
+    dishes
+      .getRecommendedDishes()
+      .then((res) => {
+        console.log(res);
+        this.setData({
+          recommendDishes: res.data,
+        });
+      })
+      .catch((err) => {
+        console.error("获取推荐菜品失败", err);
+      });
   },
 
   // 更新购物车数量
@@ -194,6 +208,7 @@ Page({
   // 显示菜品详情
   showDishDetail(e) {
     const dish = e.currentTarget.dataset.dish;
+    console.log(dish); // 打印菜品信息，检查是否正确获取到了dish
     this.setData({
       currentDish: dish,
       showDishDetail: true,

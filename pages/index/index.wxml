@@ -59,7 +59,7 @@
   <view class="dish-detail-modal" wx:if="{{showDishDetail}}">
     <view class="dish-detail-content">
       <view class="dish-detail-close" bindtap="closeDishDetail">×</view>
-      <image class="dish-detail-image" src="{{currentDish.image}}" mode="aspectFill"></image>
+      <image class="dish-detail-image" src="{{currentDish.image.url}}" mode="aspectFill" catchtap="previewImage" data-url='{{currentDish.image.url}}'></image>
       <view class="dish-detail-info">
         <view class="dish-detail-name">{{currentDish.name}}</view>
         <view class="dish-detail-desc">{{currentDish.description}}</view>
