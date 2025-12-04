@@ -32,7 +32,7 @@
               <text class="dish-order-count">已点 {{item.orderCount || 0}} 次</text>
             </view>
             <view class="dish-action" catchtap="addToCart" data-dish="{{item}}">
-              <image class="add-icon" src="/images/add.png" mode="aspectFit"></image>
+              <t-icon name="add-circle-filled" size="40rpx" class="add-icon" style="color: var(--primary-color);"></t-icon>
             </view>
           </view>
         </view>
@@ -82,7 +82,7 @@
             <view class="counter-number">{{currentDishCount}}</view>
             <view class="counter-btn plus" catchtap="increaseDishCount">+</view>
           </view>
-          <button class="btn btn-primary add-to-cart-btn" bindtap="confirmAddToCart">加入购物车</button>
+          <t-button theme="primary" size="large" class="add-to-cart-btn" bindtap="confirmAddToCart">加入购物车</t-button>
         </view>
       </view>
     </view>

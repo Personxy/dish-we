@@ -30,6 +30,7 @@
       bindtap="submitUserInfo" 
       loading="{{isSubmitting}}" 
       disabled="{{isSubmitting}}"
+    
     >
       确认
     </button>

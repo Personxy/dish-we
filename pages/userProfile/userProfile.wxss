@@ -84,5 +84,14 @@
   border-radius: 8px;
   font-size: 32rpx;
   height: 88rpx;
-  line-height: 88rpx;
+  /* 使用 Flex 布局让按钮内容居中（垂直/水平） */
+  display: flex; /* 关键：启用 Flex 布局 */
+  align-items: center; /* 关键：垂直居中文本 */
+  justify-content: center; /* 关键：水平居中文本 */
+  padding: 0; /* 清除默认 padding，避免居中偏移 */
+}
+
+/* 去掉小程序按钮默认的 ::after 边框，避免视觉偏移 */
+.submit-btn::after {
+  border: none;
 }

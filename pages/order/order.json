@@ -4,5 +4,8 @@
   "navigationBarBackgroundColor": "#007AFF",
   "backgroundTextStyle": "light",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-icon": "tdesign-miniprogram/icon/icon"
+  }
 } 

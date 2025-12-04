@@ -11,16 +11,14 @@ Page({
     totalAmount: "0.00", // 总金额
     remark: "", // 备注
     remarkLength: 0, // 备注长度
-    timeArray: [[], []], // 时间选择器数据
-    timeIndex: [0, 0], // 时间选择器索引
-    selectedTime: "", // 已选择的时间字符串
+    mode: "", // TDesign 选择器模式标识
+    datetimeVisible: false, // 控制日期时间选择器显隐
+    datetime: Date.now(), // 选中的时间戳（ms）
+    datetimeText: "", // 显示在 t-cell 的文本
     isSubmitting: false, // 是否正在提交
   },
 
-  onLoad: function () {
-    // 初始化时间选择器
-    this.initTimePicker();
-  },
+  onLoad: function () {},
 
   onShow: function () {
     // 获取购物车数据
@@ -153,82 +151,51 @@ Page({
     });
   },
 
-  // 初始化时间选择器
-  initTimePicker: function () {
-    // 获取当前时间
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-
-    // 生成小时数组，从当前小时开始到22点结束
-    const hoursArr = [];
-    for (let i = hours; i <= 22; i++) {
-      hoursArr.push(i < 10 ? `0${i}` : `${i}`);
-    }
-
-    // 生成分钟数组，如果是当前小时，则从当前分钟开始，否则从0开始
-    const generateMinutesArr = (hour) => {
-      const minutesArr = [];
-      const startMinute = hour == hours ? Math.ceil(minutes / 10) * 10 : 0;
-
-      for (let i = startMinute; i < 60; i += 10) {
-        minutesArr.push(i < 10 ? `0${i}` : `${i}`);
-      }
-
-      return minutesArr;
-    };
-
-    // 初始小时为当前小时
-    const minutesArr = generateMinutesArr(hours);
-
+  // 打开 TDesign 选择器
+  showPicker: function (e) {
+    const { mode } = e?.currentTarget?.dataset || {};
     this.setData({
-      timeArray: [hoursArr, minutesArr],
-      hoursArr,
+      mode: mode,
+      [`${mode}Visible`]: true,
     });
   },
 
-  // 时间选择器列变化事件
-  onTimeColumnChange: function (e) {
-    const { column, value } = e.detail;
-    const { timeArray, timeIndex, hoursArr } = this.data;
-
-    // 如果是第一列（小时）变化
-    if (column === 0) {
-      // 重新生成分钟数组
-      const selectedHour = parseInt(hoursArr[value]);
-      const now = new Date();
-      const hours = now.getHours();
-
-      const minutesArr = [];
-      const startMinute = selectedHour == hours ? Math.ceil(now.getMinutes() / 10) * 10 : 0;
-
-      for (let i = startMinute; i < 60; i += 10) {
-        minutesArr.push(i < 10 ? `0${i}` : `${i}`);
-      }
-
-      // 更新分钟数组和索引
-      const newTimeArray = [timeArray[0], minutesArr];
-      const newTimeIndex = [value, 0];
-
-      this.setData({
-        timeArray: newTimeArray,
-        timeIndex: newTimeIndex,
-      });
-    }
+  // 关闭 TDesign 选择器
+  hidePicker: function () {
+    const { mode } = this.data;
+    this.setData({
+      [`${mode}Visible`]: false,
+    });
   },
 
-  // 时间选择器确定事件
-  onTimeChange: function (e) {
-    const { value } = e.detail;
-    const { timeArray } = this.data;
-
-    const selectedHour = timeArray[0][value[0]];
-    const selectedMinute = timeArray[1][value[1]];
-
+  // 确认选择（格式化为 YYYY-MM-DD HH:mm:ss）
+  onConfirm: function (e) {
+    const { value } = e?.detail || {};
+    const { mode } = this.data;
+    const d = new Date(value);
+    const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
+    const txt = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
     this.setData({
-      timeIndex: value,
-      selectedTime: `今日 ${selectedHour}:${selectedMinute}`,
+      [mode]: value,
+      [`${mode}Text`]: txt,
     });
+    this.hidePicker();
+  },
+
+  // 列变化（可用于联动日志或自定义处理）
+  onColumnChange: function (e) {
+    // e.detail.value 为当前各列的值
+  },
+
+  
+
+  // 预览购物车图片
+  previewCartImage: function (e) {
+    const currentUrl = e.currentTarget.dataset.url;
+    const urls = (this.data.cartItems || [])
+      .map((item) => item?.image?.url)
+      .filter((u) => !!u);
+    wx.previewImage({ current: currentUrl, urls: urls.length ? urls : [currentUrl] });
   },
 
   // 去点餐
@@ -268,18 +235,11 @@ Page({
       price: 1, // 价格默认设置为1
     }));
 
-    // 处理预约时间
+    // 处理预约时间（使用 datetime 时间戳）
     let scheduledTime = null;
-    if (this.data.selectedTime) {
-      // 解析选择的时间
-      const timeStr = this.data.selectedTime.replace("今日 ", "");
-      const [hours, minutes] = timeStr.split(":");
-
-      // 创建预约时间对象
-      const now = new Date();
-      scheduledTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(hours), parseInt(minutes));
+    if (this.data.datetime) {
+      scheduledTime = new Date(this.data.datetime);
     } else {
-      // 默认为当前时间后15分钟
       scheduledTime = new Date(Date.now() + 15 * 60 * 1000);
     }
 

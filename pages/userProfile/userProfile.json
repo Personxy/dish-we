@@ -2,5 +2,7 @@
   "navigationBarTitleText": "完善个人信息",
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#ffffff",
-  "usingComponents": {}
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button"
+  }
 }

@@ -4,5 +4,9 @@
   "navigationBarBackgroundColor": "#007AFF",
   "backgroundTextStyle": "light",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
-} 
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-date-time-picker": "tdesign-miniprogram/date-time-picker/date-time-picker"
+  }
+}

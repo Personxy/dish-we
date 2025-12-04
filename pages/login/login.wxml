@@ -4,5 +4,5 @@
   </view>
   <view class="title">欢迎使用点餐小程序</view>
   <view class="subtitle">请登录后继续使用</view>
-  <button class="login-btn" bindtap="handleLogin">微信一键登录</button>
+  <t-button theme="primary" size="large" class="login-btn" bindtap="handleLogin">微信一键登录</t-button>
 </view>

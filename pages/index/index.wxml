@@ -64,7 +64,7 @@
         <view class="dish-detail-name">{{currentDish.name}}</view>
         <view class="dish-detail-desc">{{currentDish.description}}</view>
         <view class="dish-detail-action">
-          <button class="btn btn-primary" bindtap="addToCart">加入购物车</button>
+          <t-button theme="primary" size="large" bindtap="addToCart">加入购物车</t-button>
         </view>
       </view>
     </view>
@@ -73,7 +73,9 @@
 <!-- 加载中状态 -->
 <view class="loading-container" wx:else>
   <view class="loading">
-    <image class="loading-icon" src="/images/loading.gif"></image>
+    <!-- 使用全局通用加载动画（CSS Spinner），避免使用图片 -->
+    <!-- 说明：loading-spinner 为基础类；loading-spinner--md 为中等尺寸 -->
+    <view class="loading-spinner loading-spinner--md"></view>
     <text class="loading-text">加载中...</text>
   </view>
 </view>
