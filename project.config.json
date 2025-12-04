@@ -28,14 +28,26 @@
     "enableEngineNative": false,
     "useIsolateContext": true,
     "userConfirmedBundleSwitch": false,
-    "packNpmManually": false,
-    "packNpmRelationList": [],
+    "packNpmManually": true,
+    "packNpmRelationList": [
+      {
+        "packageJsonPath": "package.json",
+        "miniprogramNpmDistDir": "miniprogram_npm"
+      }
+    ],
     "minifyWXSS": true,
     "showES6CompileOption": false,
     "ignoreUploadUnusedFiles": true,
     "useCompilerPlugins": [
       "less"
-    ]
+    ],
+    "compileWorklet": false,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "condition": {},
@@ -47,5 +59,7 @@
     "ignore": [],
     "include": []
   },
-  "appid": "wxc5c6eef50aa07409"
+  "appid": "wxc5c6eef50aa07409",
+  "libVersion": "3.8.2",
+  "simulatorPluginLibVersion": {}
 }
