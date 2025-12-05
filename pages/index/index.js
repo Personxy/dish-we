@@ -154,8 +154,15 @@ Page({
       .getRecommendedDishes()
       .then((res) => {
         console.log(res);
+
+        const recommendDishes = res.data.map((item) => {
+          return {
+            ...item,
+            id: item._id,
+          };
+        });
         this.setData({
-          recommendDishes: res.data,
+          recommendDishes: recommendDishes,
         });
       })
       .catch((err) => {

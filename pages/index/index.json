@@ -3,6 +3,8 @@
   "navigationBarTextStyle": "white",
   "navigationBarBackgroundColor": "#007AFF",
   "backgroundTextStyle": "light",
-  "enablePullDownRefresh": true
-  
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button"
+  }
 }

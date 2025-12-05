@@ -23,9 +23,6 @@ Page({
   onShow: function () {
     // 获取购物车数据
     this.getCartItems();
-
-    // 计算价格
-    // this.calculatePrice();
   },
 
   // 获取购物车数据
@@ -33,25 +30,6 @@ Page({
     const cartItems = app.globalData.cartItems || [];
     this.setData({
       cartItems,
-    });
-  },
-
-  // 计算价格
-  calculatePrice: function () {
-    const { cartItems, packagingFee, deliveryFee } = this.data;
-
-    // 计算商品小计
-    let subtotal = 0;
-    cartItems.forEach((item) => {
-      subtotal += item.price * item.count;
-    });
-
-    // 计算总金额
-    const totalAmount = subtotal + parseFloat(packagingFee) + parseFloat(deliveryFee);
-
-    this.setData({
-      subtotal: subtotal.toFixed(2),
-      totalAmount: totalAmount.toFixed(2),
     });
   },
 
@@ -70,9 +48,6 @@ Page({
       this.setData({
         cartItems,
       });
-
-      // 重新计算价格
-      this.calculatePrice();
     }
   },
 
@@ -100,9 +75,6 @@ Page({
               this.setData({
                 cartItems,
               });
-
-              // 重新计算价格
-              this.calculatePrice();
             }
           },
         });
@@ -115,9 +87,6 @@ Page({
       this.setData({
         cartItems,
       });
-
-      // 重新计算价格
-      this.calculatePrice();
     }
   },
 
@@ -136,7 +105,6 @@ Page({
           });
 
           // 重新计算价格
-          this.calculatePrice();
         }
       },
     });
@@ -174,7 +142,9 @@ Page({
     const { mode } = this.data;
     const d = new Date(value);
     const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
-    const txt = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    const txt = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(
+      d.getMinutes()
+    )}:${pad(d.getSeconds())}`;
     this.setData({
       [mode]: value,
       [`${mode}Text`]: txt,
@@ -187,14 +157,10 @@ Page({
     // e.detail.value 为当前各列的值
   },
 
-  
-
   // 预览购物车图片
   previewCartImage: function (e) {
     const currentUrl = e.currentTarget.dataset.url;
-    const urls = (this.data.cartItems || [])
-      .map((item) => item?.image?.url)
-      .filter((u) => !!u);
+    const urls = (this.data.cartItems || []).map((item) => item?.image?.url).filter((u) => !!u);
     wx.previewImage({ current: currentUrl, urls: urls.length ? urls : [currentUrl] });
   },
 
