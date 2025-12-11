@@ -19,6 +19,7 @@ Page({
     showDishDetail: false,
     currentDish: {},
     currentDishCount: 1,
+    hasToken: false,
   },
 
   onLoad: function () {
@@ -27,6 +28,8 @@ Page({
 
   onShow: function () {
     this.updateCartInfo();
+    const token = wx.getStorageSync("token");
+    this.setData({ hasToken: !!token });
   },
 
   // 显示加载提示
@@ -387,6 +390,10 @@ Page({
     wx.navigateTo({
       url: "/pages/cart/cart",
     });
+  },
+
+  goToLogin: function () {
+    wx.navigateTo({ url: "/pages/login/login?returnUrl=" + encodeURIComponent("/pages/order/order") });
   },
   // 预览图片
   previewImage: function (e) {

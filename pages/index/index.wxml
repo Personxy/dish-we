@@ -1,11 +1,11 @@
 <view class="container" wx:if="{{!pageLoading}}">
   <!-- 用户信息区域 -->
-  <view class="user-info-card" bindtap="navigateToUserProfile">
+  <view class="user-info-card" bindtap="handleUserInfoTap">
     <view class="user-avatar-container">
       <image class="user-avatar" src="{{userInfo.avatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
     </view>
     <view class="user-detail">
-      <view class="user-nickname">{{userInfo.username || '游客'}}</view>
+      <view class="user-nickname">{{userInfo.username || '游客（登录）'}}</view>
       <!-- <view class="user-welcome">静静今天吃什么</view> -->
     </view>
   </view>

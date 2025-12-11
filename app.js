@@ -10,6 +10,7 @@ App({
     isNewUser: false, // 是否是新用户
     userInfoReadyCallback: null, // 添加回调函数属性
     loginSuccessCallback: null, // 添加登录成功回调函数
+    returnUrl: null,
   },
 
   onLaunch: function () {
@@ -25,16 +26,8 @@ App({
       this.globalData.userInfo = userInfo;
     }
 
-    if (token) {
-      // 获取用户信息（如果本地没有）
-      if (!userInfo) {
-        this.getUserInfo();
-      }
-    } else {
-      // 没有token时，跳转到登录页面
-      wx.navigateTo({
-        url: "/pages/login/login",
-      });
+    if (token && !userInfo) {
+      this.getUserInfo();
     }
   },
 
@@ -114,6 +107,36 @@ App({
       .catch((err) => {
         console.error("获取用户信息失败", err);
       });
+  },
+
+  ensureLogin: function (targetRoute) {
+    const token = wx.getStorageSync("token");
+    if (token) {
+      return Promise.resolve(true);
+    }
+    const pages = getCurrentPages();
+    const current = pages[pages.length - 1] || {};
+    const route = targetRoute || (current.route ? "/" + current.route : "/pages/index/index");
+    return new Promise((resolve) => {
+      wx.showModal({
+        title: "提示",
+        content: "登录后可继续操作",
+        cancelText: "暂不登录",
+        confirmText: "去登录",
+        success: (res) => {
+          if (res.confirm) {
+            this.globalData.returnUrl = route;
+            wx.navigateTo({
+              url: `/pages/login/login?returnUrl=${encodeURIComponent(route)}`,
+            });
+            resolve(false);
+          } else {
+            resolve(false);
+          }
+        },
+        fail: () => resolve(false),
+      });
+    });
   },
 
   // 添加商品到购物车

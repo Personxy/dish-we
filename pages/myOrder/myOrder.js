@@ -18,6 +18,7 @@ Page({
       pages: 0,
     },
     hasMore: false, // 是否有更多数据
+    isLoggedIn: false,
   },
 
   onLoad: function () {},
@@ -28,7 +29,25 @@ Page({
       "pagination.page": 1,
       hasMore: false,
     });
-    this.loadOrders();
+    const token = wx.getStorageSync("token");
+    if (token) {
+      this.setData({ isLoggedIn: true });
+      this.loadOrders();
+    } else {
+      this.setData({ isLoggedIn: false });
+      app.ensureLogin("/pages/myOrder/myOrder").then((logged) => {
+        if (logged) {
+          this.setData({ isLoggedIn: true });
+          this.loadOrders();
+        } else {
+          wx.showToast({ title: "请登录后查看订单", icon: "none" });
+        }
+      });
+    }
+  },
+
+  goToLogin: function () {
+    wx.navigateTo({ url: "/pages/login/login?returnUrl=" + encodeURIComponent("/pages/myOrder/myOrder") });
   },
 
   // 显示加载提示

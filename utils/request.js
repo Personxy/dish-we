@@ -21,10 +21,6 @@ const request = (url, method, data, needToken = true) => {
       if (token) {
         header["Authorization"] = `Bearer ${token}`;
       } else {
-        // 如果需要token但没有token，跳转到登录页面
-        wx.navigateTo({
-          url: "/pages/login/login",
-        });
         reject(new Error("未登录或登录已过期"));
         return;
       }
@@ -42,21 +38,12 @@ const request = (url, method, data, needToken = true) => {
         if (res.statusCode === 200 || res.statusCode === 201) {
           resolve(res.data);
         } else if (res.statusCode === 401) {
-          // token失效，清除本地token缓存
           wx.removeStorageSync("token");
-
-          // 通知页面需要重新登录
           wx.showToast({
             title: "登录已过期，请重新登录",
             icon: "none",
             duration: 2000,
           });
-
-          // 跳转到登录页面
-          wx.navigateTo({
-            url: "/pages/login/login",
-          });
-
           reject(new Error("登录已过期，请重试"));
         } else {
           reject(new Error(res.data.message || "请求失败"));

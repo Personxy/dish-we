@@ -42,11 +42,17 @@
           <text>{{loadingText || '加载中...'}}</text>
         </view>
       </view>
-      <!-- 空状态 -->
-      <view class="empty-state" wx:else>
-        <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
-        <text>暂无菜品</text>
-      </view>
+      <!-- 空状态：未登录时显示去登录按钮，否则显示暂无菜品 -->
+      <block wx:else>
+        <view class="empty-state" wx:if="{{!hasToken}}">
+          <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
+          <t-button theme="primary" size="medium" class="go-login-btn" bindtap="goToLogin">去登录</t-button>
+        </view>
+        <view class="empty-state" wx:else>
+          <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
+          <text>暂无菜品</text>
+        </view>
+      </block>
     </scroll-view>
   </view>
   <!-- 底部结算栏 -->

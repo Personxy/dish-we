@@ -5,10 +5,7 @@ import api from "../../utils/api"; // 引入API模块
 Page({
   data: {
     cartItems: [], // 购物车商品
-    subtotal: "0.00", // 商品小计
-    packagingFee: "2.00", // 包装费
-    deliveryFee: "0.00", // 配送费
-    totalAmount: "0.00", // 总金额
+
     remark: "", // 备注
     remarkLength: 0, // 备注长度
     mode: "", // TDesign 选择器模式标识
@@ -181,6 +178,12 @@ Page({
         title: "购物车为空",
         icon: "none",
       });
+      return;
+    }
+
+    const token = wx.getStorageSync("token");
+    if (!token) {
+      app.ensureLogin();
       return;
     }
 

@@ -4,7 +4,7 @@ import request from "../request";
 const categoryApi = {
   // 获取分类列表
   getCategories: () => {
-    return request("/api/categories", "GET", {});
+    return request("/api/categories", "GET", {}, false);
   },
 
   // 创建分类

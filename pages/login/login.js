@@ -2,11 +2,15 @@ const app = getApp();
 
 Page({
   data: {
-    isLoading: false
+    isLoading: false,
+    returnUrl: ""
   },
 
-  onLoad: function () {
-    // 页面加载时执行
+  onLoad: function (options) {
+    const url = (options && options.returnUrl) || app.globalData.returnUrl || "/pages/index/index";
+    this.setData({
+      returnUrl: url
+    });
   },
 
   // 处理登录按钮点击
@@ -25,11 +29,13 @@ Page({
       this.setData({
         isLoading: false
       });
-      
-      // 跳转到首页
-      wx.switchTab({
-        url: '/pages/index/index'
-      });
+      const target = this.data.returnUrl || "/pages/index/index";
+      const tabPages = ["/pages/index/index", "/pages/order/order", "/pages/myOrder/myOrder"];
+      if (tabPages.includes(target)) {
+        wx.switchTab({ url: target });
+      } else {
+        wx.navigateTo({ url: target });
+      }
     };
     
     // 设置超时，避免长时间等待
@@ -45,5 +51,10 @@ Page({
         });
       }
     }, 10000);
+  },
+
+  handleCancel: function () {
+    const target = "/pages/index/index";
+    wx.switchTab({ url: target });
   }
 });

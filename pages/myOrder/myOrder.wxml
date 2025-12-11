@@ -82,7 +82,8 @@
     <view class="empty-state" wx:if="{{!isLoading && orders.length === 0}}">
       <image class="empty-icon" src="/images/empty-order.png" mode="aspectFit"></image>
       <text>暂无日程</text>
-      <t-button theme="primary" size="medium" class="go-order-btn" bindtap="goToOrder">去点餐</t-button>
+      <t-button wx:if="{{isLoggedIn}}" theme="primary" size="medium" class="go-order-btn" bindtap="goToOrder">去点餐</t-button>
+      <t-button wx:else theme="primary" size="medium" class="go-order-btn" bindtap="goToLogin">去登录</t-button>
     </view>
   </view>
   <!-- 订单详情弹窗 -->
