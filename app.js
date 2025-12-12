@@ -14,9 +14,6 @@ App({
   },
 
   onLaunch: function () {
-    wx.setEnableDebug({
-      enableDebug: true,
-    });
     wx.setStorageSync("serverUrl", "https://yangjile.cn/api");
     // 检查本地是否有缓存的token和用户信息
     const token = wx.getStorageSync("token");
