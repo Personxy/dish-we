@@ -33,56 +33,65 @@ App({
 
   // 微信登录
   wechatLogin: function () {
-    wx.login({
-      success: (res) => {
-        console.log(res);
-        if (res.code) {
-          // 使用 api 封装的方法
-          user
-            .wechatLogin(res.code)
-            .then((result) => {
-              console.log(result);
-              if (result.success) {
-                // 判断是否是新用户
-                const isNewUser = result.isNewUser || false;
-                this.globalData.isNewUser = isNewUser;
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          console.log(res);
+          if (res.code) {
+            // 使用 api 封装的方法
+            user
+              .wechatLogin(res.code)
+              .then((result) => {
+                console.log(result);
+                if (result.success) {
+                  // 判断是否是新用户
+                  const isNewUser = result.isNewUser || false;
+                  this.globalData.isNewUser = isNewUser;
 
-                if (isNewUser) {
-                  // 新用户，跳转到完善信息页面
-                  wx.navigateTo({
-                    url: "/pages/userProfile/userProfile",
-                  });
-                } else {
-                  // 老用户，获取用户信息
-                  this.getUserInfo();
-                  // 调用登录成功回调
-                  if (this.loginSuccessCallback) {
-                    this.loginSuccessCallback();
+                  if (isNewUser) {
+                    // 新用户，跳转到完善信息页面
+                    wx.navigateTo({
+                      url: "/pages/userProfile/userProfile",
+                    });
+                    resolve({ success: true, isNewUser: true });
+                  } else {
+                    // 老用户，获取用户信息
+                    this.getUserInfo();
+                    // 调用登录成功回调
+                    if (this.loginSuccessCallback) {
+                      this.loginSuccessCallback();
+                    }
+                    resolve({ success: true, isNewUser: false });
                   }
+                } else {
+                  reject(new Error(result.msg || "登录失败"));
                 }
-              }
-            })
-            .catch((err) => {
-              console.error("微信登录失败", err);
-              wx.showToast({
-                title: "网络错误",
-                icon: "none",
+              })
+              .catch((err) => {
+                console.error("微信登录失败", err);
+                wx.showToast({
+                  title: "网络错误",
+                  icon: "none",
+                });
+                reject(err);
               });
+          } else {
+            wx.showToast({
+              title: "登录失败: " + res.errMsg,
+              icon: "none",
             });
-        } else {
+            reject(new Error("登录失败: " + res.errMsg));
+          }
+        },
+        fail: (err) => {
+          console.log("登录失败", err);
           wx.showToast({
-            title: "登录失败: " + res.errMsg,
+            title: "登录失败",
             icon: "none",
           });
-        }
-      },
-      fail: (err) => {
-        console.log("登录失败", err);
-        wx.showToast({
-          title: "登录失败",
-          icon: "none",
-        });
-      },
+          reject(err);
+        },
+      });
     });
   },
 

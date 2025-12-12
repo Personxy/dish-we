@@ -14,6 +14,23 @@ const userApi = {
     });
   },
 
+  // 退出登录
+  logout: () => {
+    return request("/api/users/logout", "POST", {}).then((res) => {
+      if (res.success) {
+        // 清除本地存储
+        wx.removeStorageSync("token");
+        wx.removeStorageSync("userInfo");
+        // 清除全局数据
+        const app = getApp();
+        app.globalData.userInfo = null;
+        app.globalData.token = null;
+        app.globalData.isNewUser = false;
+      }
+      return res;
+    });
+  },
+
   // 获取用户信息
   getProfile: () => {
     return request("/api/users/getProfile", "GET", {});

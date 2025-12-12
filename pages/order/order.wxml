@@ -59,7 +59,7 @@
   <view class="cart-bar">
     <view class="cart-info">
       <view class="cart-icon-wrap" bindtap="navigateToCart">
-        <image class="cart-icon" src="/images/cart.png" mode="aspectFit"></image>
+        <image class="cart-icon" src="/images/menu.png" mode="aspectFit"></image>
         <view class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
       </view>
       <!-- <view class="cart-price">
@@ -68,7 +68,7 @@
       </view> -->
     </view>
     <view class="checkout-btn {{cartCount > 0 ? 'btn-active' : ''}}" bindtap="checkout">
-      去结算 ({{cartCount}})
+      去制作 ({{cartCount}})
     </view>
   </view>
   <!-- 菜品详情弹窗 -->
@@ -88,7 +88,7 @@
             <view class="counter-number">{{currentDishCount}}</view>
             <view class="counter-btn plus" catchtap="increaseDishCount">+</view>
           </view>
-          <t-button theme="primary" size="large" class="add-to-cart-btn" bindtap="confirmAddToCart">加入购物车</t-button>
+          <t-button theme="primary" size="large" class="add-to-cart-btn" bindtap="confirmAddToCart">加入菜单</t-button>
         </view>
       </view>
     </view>

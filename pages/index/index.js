@@ -24,7 +24,6 @@ Page({
   },
   onShow() {},
   onLoad() {
-    this.getRecommendDishes();
     console.log(app.globalData.userInfo);
     if (app.globalData.userInfo) {
       // 如果 app.globalData.userInfo 已经有值，直接使用
@@ -61,6 +60,9 @@ Page({
   onShow() {
     // 更新购物车数量
     this.updateCartCount();
+
+    // 获取推荐菜品
+    this.getRecommendDishes();
 
     const token = wx.getStorageSync("token");
     if (token) {

@@ -13,16 +13,16 @@
   <view class="feature-grid">
     <view class="feature-item" bindtap="navigateToOrder">
       <image class="feature-icon" src="/images/order_food.png" mode="aspectFit"></image>
-      <text class="feature-name">点餐</text>
+      <text class="feature-name">菜谱</text>
     </view>
     <view class="feature-item" bindtap="navigateToCart">
-      <image class="feature-icon" src="/images/cart.png" mode="aspectFit"></image>
-      <text class="feature-name">餐食计划</text>
+      <image class="feature-icon" src="/images/menu.png" mode="aspectFit"></image>
+      <text class="feature-name">我的菜单</text>
       <view class="badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
     </view>
     <view class="feature-item" bindtap="navigateToMyOrder">
       <image class="feature-icon" src="/images/order.png" mode="aspectFit"></image>
-      <text class="feature-name">计划列表</text>
+      <text class="feature-name">制作记录</text>
     </view>
     <view class="feature-item" bindtap="navigateToDishManage" wx:if="{{isAdmin}}">
       <image class="feature-icon" src="/images/menu.png" mode="aspectFit"></image>

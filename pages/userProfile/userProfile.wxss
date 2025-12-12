@@ -95,3 +95,19 @@
 .submit-btn::after {
   border: none;
 }
+
+.logout-btn {
+  margin-top: 30rpx;
+  background-color: #f5f5f5;
+  color: #ff4d4f;
+  border-radius: 8px;
+  font-size: 32rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-btn::after {
+  border: none;
+}

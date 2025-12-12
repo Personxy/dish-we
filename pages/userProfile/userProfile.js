@@ -7,16 +7,56 @@ Page({
     isSubmitting: false,
     serverAvatarUrl: "", // 存储服务器返回的头像URL
     isUploading: false, // 头像上传状态
+    isEdit: false, // 是否为编辑模式
   },
 
   onLoad: function (options) {
     // 获取本地存储的用户信息
     const userInfo = wx.getStorageSync("userInfo") || {};
+    // 判断是否为新用户
+    const isNewUser = app.globalData.isNewUser;
 
     // 设置初始数据
     this.setData({
       avatarUrl: userInfo.avatar || "/images/default-avatar.png",
       username: userInfo.username || "",
+      isEdit: !isNewUser, // 如果不是新用户，则是编辑模式
+    });
+  },
+
+  // 退出登录
+  handleLogout() {
+    wx.showModal({
+      title: "提示",
+      content: "确定要退出登录吗？",
+      success: (res) => {
+        if (res.confirm) {
+          user
+            .logout()
+            .then(() => {
+              wx.showToast({
+                title: "已退出登录",
+                icon: "success",
+              });
+              setTimeout(() => {
+                wx.reLaunch({
+                  url: "/pages/index/index",
+                });
+              }, 1500);
+            })
+            .catch((err) => {
+              console.error("退出登录失败", err);
+              // 即使接口调用失败，也要清除本地状态
+              wx.removeStorageSync("token");
+              wx.removeStorageSync("userInfo");
+              app.globalData.userInfo = null;
+              app.globalData.token = null;
+              wx.reLaunch({
+                url: "/pages/index/index",
+              });
+            });
+        }
+      },
     });
   },
 

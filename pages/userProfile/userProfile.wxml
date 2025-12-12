@@ -1,7 +1,7 @@
 <view class="profile-container">
   <view class="profile-header">
-    <view class="profile-title">完善个人信息</view>
-    <view class="profile-subtitle">请设置您的头像和昵称</view>
+    <view class="profile-title">{{isEdit ? '修改个人信息' : '完善个人信息'}}</view>
+    <view class="profile-subtitle">{{isEdit ? '修改您的头像和昵称' : '请设置您的头像和昵称'}}</view>
   </view>
   
   <view class="profile-form">
@@ -32,7 +32,15 @@
       disabled="{{isSubmitting}}"
     
     >
-      确认
+      {{isEdit ? '保存修改' : '确认'}}
+    </button>
+    
+    <button 
+      wx:if="{{isEdit}}"
+      class="logout-btn" 
+      bindtap="handleLogout"
+    >
+      退出登录
     </button>
   </view>
 </view>

@@ -4,7 +4,7 @@
     <view wx:if="{{cartItems.length > 0}}">
       <view class="cart-header">
         <text class="cart-title">已选菜品</text>
-        <view class="cart-clear" bindtap="clearCart">清空计划</view>
+        <view class="cart-clear" bindtap="clearCart">清空菜单</view>
       </view>
       <view class="cart-items">
         <view class="cart-item" wx:for="{{cartItems}}" wx:key="id">
@@ -28,27 +28,27 @@
     <!-- 空购物车状态 -->
     <view class="empty-cart" wx:else>
       <image class="empty-cart-image" src="/images/empty-cart.png" mode="aspectFit"></image>
-      <view class="empty-cart-text">计划是空的</view>
+      <view class="empty-cart-text">菜单是空的</view>
       <t-button theme="primary" size="medium" class="go-order-btn" bindtap="goToOrder">去添加</t-button>
     </view>
   </view>
   <!-- 订单信息 -->
   <view class="order-info-section" wx:if="{{cartItems.length > 0}}">
-    <view class="section-title">餐食计划信息</view>
+    <view class="section-title">烹饪计划信息</view>
     <!-- 预约时间选择 -->
     <view class="info-item">
-      <view class="info-label">预约时间</view>
+      <view class="info-label">制作时间</view>
       <t-cell 
-        title="预约时间" 
+        title="制作时间" 
         hover 
         note="{{datetimeText || '立即烹饪'}}" 
         arrow 
         data-mode="datetime" 
         bindtap="showPicker" 
         t-class="panel-item" 
-      />
+        />
       <t-date-time-picker 
-        title="预约时间" 
+        title="制作时间" 
         visible="{{datetimeVisible}}" 
         mode="second" 
         value="{{datetime}}" 
@@ -56,7 +56,7 @@
         bindchange="onConfirm" 
         bindpick="onColumnChange" 
         bindcancel="hidePicker" 
-      />
+        />
     </view>
     <!-- 备注输入 -->
     <view class="info-item">
@@ -74,6 +74,6 @@
       <!-- <text>合计: </text>
       <text class="total-price">{{totalAmount}}</text> -->
     </view>
-    <view class="submit-btn" bindtap="submitOrder">提交计划</view>
+    <view class="submit-btn" bindtap="submitOrder">开始制作</view>
   </view>
 </view>

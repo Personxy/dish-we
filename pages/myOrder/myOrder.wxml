@@ -2,7 +2,7 @@
   <!-- 搜索栏 -->
   <view class="search-bar">
     <view class="search-input-wrap">
-      <input class="search-input" type="text" placeholder="搜索日程" confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearch" value="{{searchKeyword}}" />
+      <input class="search-input" type="text" placeholder="搜索记录" confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearch" value="{{searchKeyword}}" />
       <image class="search-icon" src="/images/search.png" mode="aspectFit"></image>
     </view>
     <view wx:if="{{searchKeyword}}" class="search-clear" bindtap="clearSearch">清除</view>
@@ -18,10 +18,10 @@
       全部
     </view>
     <view class="filter-tab {{currentStatus === '待处理' ? 'active' : ''}}" bindtap="filterByStatus" data-status="待处理">
-      待处理
+      准备中
     </view>
     <view class="filter-tab {{currentStatus === '处理中' ? 'active' : ''}}" bindtap="filterByStatus" data-status="处理中">
-      处理中
+      制作中
     </view>
     <view class="filter-tab {{currentStatus === '已取消' ? 'active' : ''}}" bindtap="filterByStatus" data-status="已取消">
       已取消
@@ -39,14 +39,14 @@
             <!-- 订单内容 -->
             <view class="order-content">
               <view class="order-header">
-                <view class="order-no">日程编号: {{item.id}}</view>
+                <view class="order-no">记录编号: {{item.id}}</view>
                 <view class="order-status {{item.status === '待处理' ? 'status-pending' : (item.status === '处理中' ? 'status-processing' : 'status-completed')}}">
                   {{item.status}}
                 </view>
               </view>
               <view class="order-info">
-                <view class="order-time">日程创建时间: {{item.createTime}}</view>
-                <view class="order-appointment-time">预约: {{item.appointmentTime}}</view>
+                <view class="order-time">记录创建时间: {{item.createTime}}</view>
+                <view class="order-appointment-time">制作时间: {{item.appointmentTime}}</view>
               </view>
               <view class="order-items">
                 <text class="order-item-summary">{{item.itemSummary}}</text>
@@ -57,10 +57,10 @@
                 </view>
                 <view class="order-actions">
                   <view class="btn btn-outline" wx:if="{{item.status === '待处理'}}" catchtap="cancelOrder" data-order-id="{{item.id}}">
-                    取消日程
+                    取消记录
                   </view>
                   <view class="btn btn-primary" wx:if="{{item.status === '处理中'}}">查看详情</view>
-                  <view class="btn btn-primary" wx:if="{{item.status === '已完成'}}">再次规划日程</view>
+                  <view class="btn btn-primary" wx:if="{{item.status === '已完成'}}">再次制作</view>
                 </view>
               </view>
             </view>
@@ -81,8 +81,8 @@
     <!-- 空订单状态 -->
     <view class="empty-state" wx:if="{{!isLoading && orders.length === 0}}">
       <image class="empty-icon" src="/images/empty-order.png" mode="aspectFit"></image>
-      <text>暂无日程</text>
-      <t-button wx:if="{{isLoggedIn}}" theme="primary" size="medium" class="go-order-btn" bindtap="goToOrder">去点餐</t-button>
+      <text>暂无制作记录</text>
+      <t-button wx:if="{{isLoggedIn}}" theme="primary" size="medium" class="go-order-btn" bindtap="goToOrder">去选菜</t-button>
       <t-button wx:else theme="primary" size="medium" class="go-order-btn" bindtap="goToLogin">去登录</t-button>
     </view>
   </view>
@@ -90,25 +90,25 @@
   <view class="order-detail-modal" wx:if="{{showOrderDetail}}">
     <view class="order-detail-content">
       <view class="detail-header">
-        <view class="detail-title">日程详情</view>
+        <view class="detail-title">记录详情</view>
         <view class="detail-close" bindtap="closeOrderDetail">×</view>
       </view>
       <scroll-view scroll-y="true" class="detail-scroll">
         <view class="detail-info">
           <view class="detail-item">
-            <text class="detail-label">日程编号</text>
+            <text class="detail-label">记录编号</text>
             <text class="detail-value">{{currentOrder.id}}</text>
           </view>
           <view class="detail-item">
-            <text class="detail-label">日程创建时间</text>
+            <text class="detail-label">记录创建时间</text>
             <text class="detail-value">{{currentOrder.createTime}}</text>
           </view>
           <view class="detail-item">
-            <text class="detail-label">预约时间</text>
+            <text class="detail-label">制作时间</text>
             <text class="detail-value">{{currentOrder.appointmentTime}}</text>
           </view>
           <view class="detail-item">
-            <text class="detail-label">日程状态</text>
+            <text class="detail-label">记录状态</text>
             <text class="detail-value status-text {{currentOrder.status === '待处理' ? 'status-pending' : (currentOrder.status === '处理中' ? 'status-processing' : 'status-completed')}}">
               {{currentOrder.status}}
             </text>

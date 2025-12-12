@@ -342,7 +342,7 @@ Page({
     this.closeDishDetail();
 
     wx.showToast({
-      title: currentDishCount > 0 ? "已加入购物车" : "已从购物车移除",
+      title: currentDishCount > 0 ? "已加入菜单" : "已从菜单移除",
       icon: "success",
     });
   },
@@ -354,7 +354,7 @@ Page({
     this.updateCartInfo();
 
     wx.showToast({
-      title: "已加入购物车",
+      title: "已加入菜单",
       icon: "success",
     });
   },
@@ -379,7 +379,7 @@ Page({
       });
     } else {
       wx.showToast({
-        title: "购物车为空",
+        title: "菜单为空",
         icon: "none",
       });
     }
