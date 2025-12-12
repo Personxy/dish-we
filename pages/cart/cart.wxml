@@ -1,5 +1,5 @@
 <view class="cart-container">
-  <!-- 购物车列表 -->
+  <!-- 计划列表 -->
   <view class="cart-list">
     <view wx:if="{{cartItems.length > 0}}">
       <view class="cart-header">
@@ -28,7 +28,7 @@
     <!-- 空购物车状态 -->
     <view class="empty-cart" wx:else>
       <image class="empty-cart-image" src="/images/empty-cart.png" mode="aspectFit"></image>
-      <view class="empty-cart-text">菜单是空的</view>
+      <view class="empty-cart-text">计划是空的</view>
       <t-button theme="primary" size="medium" class="go-order-btn" bindtap="goToOrder">去添加</t-button>
     </view>
   </view>
