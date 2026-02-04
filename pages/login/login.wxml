@@ -2,7 +2,8 @@
   <view class="logo-container">
     <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
   </view>
-  <view class="title">欢迎使用点餐小程序</view>
-  <view class="subtitle">请登录后继续使用</view>
-  <button class="login-btn" bindtap="handleLogin">微信一键登录</button>
+  <view class="title">欢迎使用烹饪助手</view>
+  <view class="subtitle">登录不是必需，未登录也可浏览</view>
+  <t-button theme="primary" size="large" class="login-btn" bindtap="handleLogin">微信一键登录</t-button>
+  <t-button theme="default" size="large" class="login-btn" bindtap="handleCancel">暂不登录，返回首页</t-button>
 </view>

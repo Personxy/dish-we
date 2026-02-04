@@ -29,19 +29,18 @@
       },
       {
         "pagePath": "pages/order/order",
-        "text": "点餐",
+        "text": "菜谱",
         "iconPath": "images/order_food.png",
         "selectedIconPath": "images/order_food_selected.png"
       },
       {
         "pagePath": "pages/myOrder/myOrder",
-        "text": "我的计划",
+        "text": "制作记录",
         "iconPath": "images/order.png",
         "selectedIconPath": "images/order-selected.png"
       }
     ]
   },
-  "style": "v2",
   "sitemapLocation": "sitemap.json",
   "usingComponents": {
     "drag-sort": "/components/drag-sort/drag-sort"

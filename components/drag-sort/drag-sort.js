@@ -60,7 +60,7 @@ Component({
         if (res && res[0] && res[0][index]) {
           const itemRect = res[0][index];
           const itemHeight = itemRect.height;
-          const itemTop = itemRect.top;
+          // const itemTop = itemRect.top; // Unused
 
           // 计算所有项的初始位置
           const itemStyles = res[0].map((rect) => {
@@ -68,6 +68,9 @@ Component({
           });
 
           // 设置拖拽项的样式
+          // 关键修改：移除 transition: none，让拖拽项在跟随手指时更平滑（可选），
+          // 但重点是保持一致性。
+          // 这里保持 dragging 状态的特殊样式
           itemStyles[
             index
           ] = `transform: translate3d(0, 0, 0); transition: none; z-index: 10; opacity: 0.9; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);`;
@@ -93,6 +96,7 @@ Component({
       const moveY = touch.clientY - this.data.dragStartY;
 
       // 更新拖拽项的位置
+      // 保持 transition: none 以实现跟随手指的实时性
       const draggingStyle = `transform: translate3d(0, ${moveY}px, 0); transition: none; z-index: 10; opacity: 0.9; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);`;
 
       // 计算新的索引位置
@@ -109,7 +113,11 @@ Component({
 
         // 计算每个项的位移
         for (let i = 0; i < this.properties.list.length; i++) {
-          if (i === this.data.dragStartIndex) continue;
+          if (i === this.data.dragStartIndex) {
+            // 拖拽项本身的样式由 draggingStyle 控制，这里只需占位或保持原状
+            // 但为了避免在 itemStyles 中被覆盖，这里其实不需要设置，因为 wxml 里有三元表达式判断
+            continue;
+          }
 
           let offset = 0;
           if (this.data.dragStartIndex < newIndex) {
@@ -155,6 +163,19 @@ Component({
       const startIndex = this.data.dragStartIndex;
       const endIndex = this.data.dragCurrentIndex;
 
+      // 立即重置所有样式，防止残留的 transform 导致动画
+      // 将 itemStyles 重置为全空或全 0，并强制 transition: none
+      const resetStyles = this.properties.list.map(() => "transform: translate3d(0, 0, 0); transition: none;");
+
+      this.setData({
+        dragStartIndex: -1,
+        dragCurrentIndex: -1,
+        draggingItem: null,
+        draggingStyle: "",
+        itemStyles: resetStyles, // 关键：立即应用无动画的重置样式
+        animating: false,
+      });
+
       if (startIndex !== endIndex) {
         // 通知父组件排序变化
         const newList = [...this.properties.list];
@@ -171,16 +192,6 @@ Component({
           to: endIndex,
         });
       }
-
-      // 重置拖拽状态
-      this.setData({
-        dragStartIndex: -1,
-        dragCurrentIndex: -1,
-        draggingItem: null,
-        draggingStyle: "",
-        itemStyles: [],
-        animating: false,
-      });
     },
 
     // 点击项目

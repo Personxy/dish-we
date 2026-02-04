@@ -24,7 +24,6 @@ Page({
   },
   onShow() {},
   onLoad() {
-    this.getRecommendDishes();
     console.log(app.globalData.userInfo);
     if (app.globalData.userInfo) {
       // 如果 app.globalData.userInfo 已经有值，直接使用
@@ -62,8 +61,13 @@ Page({
     // 更新购物车数量
     this.updateCartCount();
 
-    // 每次进入首页时重新获取用户信息
-    app.getUserInfo();
+    // 获取推荐菜品
+    this.getRecommendDishes();
+
+    const token = wx.getStorageSync("token");
+    if (token) {
+      app.getUserInfo();
+    }
 
     // 获取最新的用户信息
     const userInfo = wx.getStorageSync("userInfo");
@@ -82,8 +86,10 @@ Page({
     // 显示导航条加载动画
     wx.showNavigationBarLoading();
 
-    // 重新获取用户信息
-    app.getUserInfo();
+    const token = wx.getStorageSync("token");
+    if (token) {
+      app.getUserInfo();
+    }
 
     // 重新获取推荐菜品
     this.getRecommendDishes();
@@ -154,8 +160,15 @@ Page({
       .getRecommendedDishes()
       .then((res) => {
         console.log(res);
+
+        const recommendDishes = res.data.map((item) => {
+          return {
+            ...item,
+            id: item._id,
+          };
+        });
         this.setData({
-          recommendDishes: res.data,
+          recommendDishes: recommendDishes,
         });
       })
       .catch((err) => {
@@ -193,15 +206,23 @@ Page({
 
   // 导航到我的订单页面
   navigateToMyOrder() {
-    wx.switchTab({
-      url: "/pages/myOrder/myOrder",
+    app.ensureLogin("/pages/myOrder/myOrder").then((logged) => {
+      if (logged) {
+        wx.switchTab({
+          url: "/pages/myOrder/myOrder",
+        });
+      }
     });
   },
 
   // 导航到菜品管理页面
   navigateToDishManage() {
-    wx.navigateTo({
-      url: "/pages/dishManage/dishManage",
+    app.ensureLogin("/pages/dishManage/dishManage").then((logged) => {
+      if (logged) {
+        wx.navigateTo({
+          url: "/pages/dishManage/dishManage",
+        });
+      }
     });
   },
 
@@ -235,8 +256,21 @@ Page({
   },
   // 在现有方法下方添加以下方法
   navigateToUserProfile() {
-    wx.navigateTo({
-      url: "/pages/userProfile/userProfile",
+    app.ensureLogin("/pages/userProfile/userProfile").then((logged) => {
+      if (logged) {
+        wx.navigateTo({
+          url: "/pages/userProfile/userProfile",
+        });
+      }
     });
+  },
+
+  handleUserInfoTap() {
+    const token = wx.getStorageSync("token");
+    if (token) {
+      wx.navigateTo({ url: "/pages/userProfile/userProfile" });
+    } else {
+      wx.navigateTo({ url: "/pages/login/login?returnUrl=" + encodeURIComponent("/pages/index/index") });
+    }
   },
 });

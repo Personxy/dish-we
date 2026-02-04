@@ -1,0 +1,23 @@
+{
+  "name": "dish-we",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Personxy/dish-we.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Personxy/dish-we/issues"
+  },
+  "homepage": "https://github.com/Personxy/dish-we#readme",
+  "dependencies": {
+    "tdesign-miniprogram": "^1.11.2"
+  }
+}

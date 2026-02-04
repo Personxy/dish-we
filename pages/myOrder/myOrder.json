@@ -1,8 +1,10 @@
 {
-  "navigationBarTitleText": "我的饮食日程",
+  "navigationBarTitleText": "我的烹饪记录",
   "navigationBarTextStyle": "white",
   "navigationBarBackgroundColor": "#007AFF",
   "backgroundTextStyle": "light",
   "enablePullDownRefresh": true,
-  "usingComponents": {}
-} 
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button"
+  }
+}

@@ -19,6 +19,7 @@ Page({
     showDishDetail: false,
     currentDish: {},
     currentDishCount: 1,
+    hasToken: false,
   },
 
   onLoad: function () {
@@ -27,6 +28,8 @@ Page({
 
   onShow: function () {
     this.updateCartInfo();
+    const token = wx.getStorageSync("token");
+    this.setData({ hasToken: !!token });
   },
 
   // 显示加载提示
@@ -339,7 +342,7 @@ Page({
     this.closeDishDetail();
 
     wx.showToast({
-      title: currentDishCount > 0 ? "已加入购物车" : "已从购物车移除",
+      title: currentDishCount > 0 ? "已加入菜单" : "已从菜单移除",
       icon: "success",
     });
   },
@@ -351,7 +354,7 @@ Page({
     this.updateCartInfo();
 
     wx.showToast({
-      title: "已加入购物车",
+      title: "已加入菜单",
       icon: "success",
     });
   },
@@ -376,7 +379,7 @@ Page({
       });
     } else {
       wx.showToast({
-        title: "购物车为空",
+        title: "菜单为空",
         icon: "none",
       });
     }
@@ -387,6 +390,10 @@ Page({
     wx.navigateTo({
       url: "/pages/cart/cart",
     });
+  },
+
+  goToLogin: function () {
+    wx.navigateTo({ url: "/pages/login/login?returnUrl=" + encodeURIComponent("/pages/order/order") });
   },
   // 预览图片
   previewImage: function (e) {

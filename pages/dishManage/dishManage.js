@@ -39,7 +39,16 @@ Page({
 
   onShow: function () {
     // 每次显示页面时刷新数据
-    this.loadCategoriesAndDishes();
+    app.ensureLogin().then((logged) => {
+      if (logged) {
+        this.loadCategoriesAndDishes();
+      } else {
+        wx.showToast({
+          title: "请登录后使用菜品管理",
+          icon: "none",
+        });
+      }
+    });
   },
 
   // 加载分类和菜品数据

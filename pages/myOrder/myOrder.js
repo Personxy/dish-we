@@ -18,6 +18,7 @@ Page({
       pages: 0,
     },
     hasMore: false, // 是否有更多数据
+    isLoggedIn: false,
   },
 
   onLoad: function () {},
@@ -28,7 +29,25 @@ Page({
       "pagination.page": 1,
       hasMore: false,
     });
-    this.loadOrders();
+    const token = wx.getStorageSync("token");
+    if (token) {
+      this.setData({ isLoggedIn: true });
+      this.loadOrders();
+    } else {
+      this.setData({ isLoggedIn: false });
+      app.ensureLogin("/pages/myOrder/myOrder").then((logged) => {
+        if (logged) {
+          this.setData({ isLoggedIn: true });
+          this.loadOrders();
+        } else {
+          wx.showToast({ title: "请登录后查看订单", icon: "none" });
+        }
+      });
+    }
+  },
+
+  goToLogin: function () {
+    wx.navigateTo({ url: "/pages/login/login?returnUrl=" + encodeURIComponent("/pages/myOrder/myOrder") });
   },
 
   // 显示加载提示
@@ -88,7 +107,7 @@ Page({
       };
       params.status = statusMap[this.data.currentStatus] || this.data.currentStatus;
     }
-    
+
     // 如果有搜索关键字
     if (this.data.searchKeyword) {
       params.keyword = this.data.searchKeyword;
@@ -124,19 +143,19 @@ Page({
             // 格式化时间的辅助函数
             const formatDate = (dateString, includeYear = true) => {
               if (!dateString) return "立即取餐";
-              
+
               const date = new Date(dateString);
-              
+
               // 检查日期是否有效
               if (isNaN(date.getTime())) return "无效日期";
-              
+
               const year = date.getFullYear();
-              const month = String(date.getMonth() + 1).padStart(2, '0');
-              const day = String(date.getDate()).padStart(2, '0');
-              const hours = String(date.getHours()).padStart(2, '0');
-              const minutes = String(date.getMinutes()).padStart(2, '0');
-              
-              return includeYear 
+              const month = String(date.getMonth() + 1).padStart(2, "0");
+              const day = String(date.getDate()).padStart(2, "0");
+              const hours = String(date.getHours()).padStart(2, "0");
+              const minutes = String(date.getMinutes()).padStart(2, "0");
+
+              return includeYear
                 ? `${year}-${month}-${day} ${hours}:${minutes}`
                 : `${month}-${day} ${hours}:${minutes}`;
             };
@@ -308,7 +327,7 @@ Page({
                   title: "计划已取消",
                   icon: "success",
                 });
-                
+
                 // 重新加载订单数据
                 this.loadOrders();
               } else {
@@ -344,9 +363,20 @@ Page({
   // 显示订单详情
   showOrderDetail: function (e) {
     const order = e.currentTarget.dataset.order;
+    const enhancedItems = (order.items || []).map((item) => {
+      const ingredientsText =
+        Array.isArray(item.ingredients) && item.ingredients.length > 0
+          ? item.ingredients
+              .slice(0, 3)
+              .map((ing) => ing.name)
+              .join("、") + (item.ingredients.length > 3 ? " 等" : "")
+          : "";
+      const orderCount = item.orderCount ?? 0;
+      return { ...item, ingredientsText, orderCount };
+    });
 
     this.setData({
-      currentOrder: order,
+      currentOrder: { ...order, items: enhancedItems },
       showOrderDetail: true,
     });
   },
@@ -355,6 +385,19 @@ Page({
   closeOrderDetail: function () {
     this.setData({
       showOrderDetail: false,
+    });
+  },
+
+  // 预览订单详情中的菜品图片
+  previewDetailImage: function (e) {
+    const currentUrl = e.currentTarget.dataset.url;
+    const { currentOrder } = this.data;
+    // 收集当前订单所有菜品图片 URL，用于预览切换
+    const urls = (currentOrder.items || []).map((item) => item?.image?.url).filter((u) => !!u);
+
+    wx.previewImage({
+      current: currentUrl,
+      urls: urls.length > 0 ? urls : [currentUrl],
     });
   },
 
@@ -404,7 +447,7 @@ Page({
                   title: "计划已取消",
                   icon: "success",
                 });
-                
+
                 // 重新加载订单数据
                 this.loadOrders();
               } else {

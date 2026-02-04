@@ -28,7 +28,7 @@ const dishesApi = {
     // 构建完整URL
     const url = `/api/dishes${queryString}`;
 
-    return request(url, "GET");
+    return request(url, "GET", {}, false);
   },
 
   // 创建菜品
@@ -47,7 +47,7 @@ const dishesApi = {
   },
   //推荐菜品
   getRecommendedDishes: () => {
-    return request("/api/dishes/popular", "GET");
+    return request("/api/dishes/popular", "GET", {}, false);
   },
 };
 

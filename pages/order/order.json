@@ -1,8 +1,11 @@
 {
-  "navigationBarTitleText": "点餐",
+  "navigationBarTitleText": "菜谱",
   "navigationBarTextStyle": "white",
   "navigationBarBackgroundColor": "#007AFF",
   "backgroundTextStyle": "light",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-icon": "tdesign-miniprogram/icon/icon"
+  }
 } 
