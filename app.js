@@ -1,4 +1,5 @@
 import { user } from "./utils/api";
+const CART_STORAGE_KEY = "cartItems";
 App({
   globalData: {
     userInfo: null,
@@ -18,9 +19,14 @@ App({
     // 检查本地是否有缓存的token和用户信息
     const token = wx.getStorageSync("token");
     const userInfo = wx.getStorageSync("userInfo");
+    const cartItems = wx.getStorageSync(CART_STORAGE_KEY);
 
     if (userInfo) {
       this.globalData.userInfo = userInfo;
+    }
+
+    if (Array.isArray(cartItems)) {
+      this.globalData.cartItems = cartItems;
     }
 
     if (token && !userInfo) {
@@ -145,15 +151,36 @@ App({
     });
   },
 
+  getCartItems: function () {
+    return this.globalData.cartItems || [];
+  },
+
+  setCartItems: function (cartItems) {
+    const items = Array.isArray(cartItems) ? cartItems : [];
+    this.globalData.cartItems = items;
+    wx.setStorageSync(CART_STORAGE_KEY, items);
+  },
+
+  clearCart: function () {
+    this.setCartItems([]);
+  },
+
+  getCartCount: function () {
+    const cartItems = this.getCartItems();
+    return cartItems.reduce((sum, item) => sum + Number(item?.count || 0), 0);
+  },
+
   // 添加商品到购物车
   addToCart: function (dish) {
-    let cartItems = this.globalData.cartItems;
+    let cartItems = this.getCartItems();
     let found = false;
+    const dishId = dish?.id || dish?._id;
+    if (!dishId) return;
 
     // 查找购物车中是否已有该商品
     for (let i = 0; i < cartItems.length; i++) {
-      if (cartItems[i].id === dish.id) {
-        cartItems[i].count++;
+      if (cartItems[i].id === dishId) {
+        cartItems[i].count = Number(cartItems[i].count || 0) + 1;
         found = true;
         break;
       }
@@ -163,9 +190,12 @@ App({
     if (!found) {
       cartItems.push({
         ...dish,
+        id: dishId,
         count: 1,
       });
     }
+
+    this.setCartItems(cartItems);
   },
 
   // // 计算购物车总价

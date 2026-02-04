@@ -1,5 +1,13 @@
 import request from "../request";
 
+const normalizeDish = (dish) => {
+  const id = dish?.id || dish?._id;
+  const rawCategory = dish?.category;
+  const categoryId =
+    dish?.categoryId || (typeof rawCategory === "string" ? rawCategory : rawCategory?._id || rawCategory?.id);
+  return { ...dish, id, categoryId };
+};
+
 // 菜品相关 API
 const dishesApi = {
   // 获取菜品列表
@@ -28,7 +36,13 @@ const dishesApi = {
     // 构建完整URL
     const url = `/api/dishes${queryString}`;
 
-    return request(url, "GET", {}, false);
+    return request(url, "GET", {}, false).then((res) => {
+      if (res?.success && Array.isArray(res.data)) {
+        const data = res.data.map(normalizeDish);
+        return { ...res, data };
+      }
+      return res;
+    });
   },
 
   // 创建菜品
@@ -47,7 +61,13 @@ const dishesApi = {
   },
   //推荐菜品
   getRecommendedDishes: () => {
-    return request("/api/dishes/popular", "GET", {}, false);
+    return request("/api/dishes/popular", "GET", {}, false).then((res) => {
+      if (res?.success && Array.isArray(res.data)) {
+        const data = res.data.map(normalizeDish);
+        return { ...res, data };
+      }
+      return res;
+    });
   },
 };
 

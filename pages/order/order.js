@@ -333,7 +333,7 @@ Page({
       cartItems = cartItems.filter((item) => item.id !== currentDish.id);
     }
 
-    app.globalData.cartItems = cartItems;
+    app.setCartItems(cartItems);
 
     // 更新购物车信息
     this.updateCartInfo();
@@ -361,12 +361,8 @@ Page({
 
   // 更新购物车信息（数量和总价）
   updateCartInfo: function () {
-    const cartItems = app.globalData.cartItems;
-
-    let total = 0;
-
     this.setData({
-      cartCount: cartItems.length,
+      cartCount: app.getCartCount(),
     });
   },
 

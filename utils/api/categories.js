@@ -3,8 +3,21 @@ import request from "../request";
 // 分类相关 API
 const categoryApi = {
   // 获取分类列表
-  getCategories: () => {
-    return request("/api/categories", "GET", {}, false);
+  getCategories: (params = {}) => {
+    const queryParams = [];
+    if (params.withDishCount !== undefined) queryParams.push(`withDishCount=${params.withDishCount}`);
+    const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
+    return request(`/api/categories${queryString}`, "GET", {}, false).then((res) => {
+      if (res?.success && Array.isArray(res.data)) {
+        const data = res.data.map((category) => ({
+          ...category,
+          id: category?.id || category?._id,
+          dishCount: category?.dishCount !== undefined ? Number(category.dishCount) : category?.dishCount,
+        }));
+        return { ...res, data };
+      }
+      return res;
+    });
   },
 
   // 创建分类

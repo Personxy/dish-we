@@ -485,17 +485,19 @@ Page({
     const { items } = this.data.currentOrder;
 
     // 清空当前购物车
-    app.globalData.cartItems = [];
+    app.clearCart();
 
     // 将订单中的商品添加到购物车
+    const cartItems = [];
     items.forEach((item) => {
-      app.globalData.cartItems.push({
+      cartItems.push({
         id: item.dish, // 使用菜品ID
         name: item.name,
         count: item.quantity,
         image: item.image,
       });
     });
+    app.setCartItems(cartItems);
 
     // 关闭弹窗
     this.closeOrderDetail();

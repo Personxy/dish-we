@@ -1,5 +1,10 @@
 import request from '../request';
 
+const normalizeOrder = (order) => {
+  const id = order?.id || order?._id;
+  return { ...order, id };
+};
+
 // 订单相关 API
 const ordersApi = {
   // 获取订单列表
@@ -16,6 +21,7 @@ const ordersApi = {
     if (params.status) queryParams.push(`status=${params.status}`);
     if (params.startDate) queryParams.push(`startDate=${encodeURIComponent(params.startDate)}`);
     if (params.endDate) queryParams.push(`endDate=${encodeURIComponent(params.endDate)}`);
+    if (params.keyword) queryParams.push(`keyword=${encodeURIComponent(params.keyword)}`);
     
     // 添加排序参数
     if (params.sort) queryParams.push(`sort=${encodeURIComponent(params.sort)}`);
@@ -28,7 +34,13 @@ const ordersApi = {
     // 构建完整URL
     const url = `/api/orders${queryString}`;
     
-    return request(url, 'GET');
+    return request(url, 'GET').then((res) => {
+      if (res?.success && Array.isArray(res.data)) {
+        const data = res.data.map(normalizeOrder);
+        return { ...res, data };
+      }
+      return res;
+    });
   },
   
   // 创建订单

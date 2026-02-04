@@ -123,12 +123,6 @@ Page({
     }, 500);
   },
 
-  // 更新用户信息到服务器
-  updateUserInfo(userInfo) {
-    _updateUserInfo(userInfo).catch((err) => {
-      console.error("更新用户信息失败", err);
-    });
-  },
   // 预览图片（放大查看）
   previewImage: function (e) {
     const url = e.currentTarget.dataset.url;
@@ -178,15 +172,8 @@ Page({
 
   // 更新购物车数量
   updateCartCount() {
-    const cartItems = app.globalData.cartItems;
-    let count = 0;
-
-    cartItems.forEach((item) => {
-      count += item.count;
-    });
-
     this.setData({
-      cartCount: count,
+      cartCount: app.getCartCount(),
     });
   },
 

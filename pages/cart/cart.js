@@ -1,5 +1,4 @@
 const app = getApp();
-const util = require("../../utils/util.js");
 import api from "../../utils/api"; // 引入API模块
 
 Page({
@@ -24,7 +23,7 @@ Page({
 
   // 获取购物车数据
   getCartItems: function () {
-    const cartItems = app.globalData.cartItems || [];
+    const cartItems = app.getCartItems();
     this.setData({
       cartItems,
     });
@@ -37,10 +36,8 @@ Page({
 
     const index = cartItems.findIndex((item) => item.id === id);
     if (index > -1) {
-      cartItems[index].count++;
-
-      // 更新全局数据
-      app.globalData.cartItems = cartItems;
+      cartItems[index].count = Number(cartItems[index].count || 0) + 1;
+      app.setCartItems(cartItems);
 
       this.setData({
         cartItems,
@@ -56,7 +53,8 @@ Page({
     const index = cartItems.findIndex((item) => item.id === id);
     if (index > -1) {
       if (cartItems[index].count > 1) {
-        cartItems[index].count--;
+        cartItems[index].count = Number(cartItems[index].count || 0) - 1;
+        app.setCartItems(cartItems);
       } else {
         // 数量为1时，询问是否删除
         wx.showModal({
@@ -65,9 +63,7 @@ Page({
           success: (res) => {
             if (res.confirm) {
               cartItems.splice(index, 1);
-
-              // 更新全局数据
-              app.globalData.cartItems = cartItems;
+              app.setCartItems(cartItems);
 
               this.setData({
                 cartItems,
@@ -77,9 +73,6 @@ Page({
         });
         return;
       }
-
-      // 更新全局数据
-      app.globalData.cartItems = cartItems;
 
       this.setData({
         cartItems,
@@ -94,8 +87,7 @@ Page({
       content: "确定要清空购物车吗？",
       success: (res) => {
         if (res.confirm) {
-          // 清空全局购物车数据
-          app.globalData.cartItems = [];
+          app.clearCart();
 
           this.setData({
             cartItems: [],
@@ -229,8 +221,7 @@ Page({
         wx.hideLoading();
 
         if (res.success) {
-          // 清空购物车
-          app.globalData.cartItems = [];
+          app.clearCart();
 
           this.setData({
             isSubmitting: false,

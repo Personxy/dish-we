@@ -8,6 +8,18 @@ const getServerUrl = () => {
   return wx.getStorageSync("serverUrl") || "http://localhost:5000";
 };
 
+const clearAuth = () => {
+  wx.removeStorageSync("token");
+  wx.removeStorageSync("userInfo");
+  try {
+    const app = getApp();
+    if (app?.globalData) {
+      app.globalData.userInfo = null;
+      app.globalData.token = null;
+    }
+  } catch (e) {}
+};
+
 // 基础请求函数
 const request = (url, method, data, needToken = true) => {
   console.log("请求开始", url, method, data);
@@ -45,7 +57,7 @@ const request = (url, method, data, needToken = true) => {
         if (res.statusCode === 200 || res.statusCode === 201) {
           resolve(res.data);
         } else if (res.statusCode === 401) {
-          wx.removeStorageSync("token");
+          clearAuth();
           wx.showToast({
             title: "登录已过期，请重新登录",
             icon: "none",
