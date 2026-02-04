@@ -241,18 +241,16 @@
   line-height: 1.6;
 }
 
+.dish-detail-action {
+  display: flex;
+  justify-content: center;
+}
 .dish-detail-price {
   font-size: 36rpx;
   color: #ff6b00;
   font-weight: 600;
   margin-bottom: 30rpx;
 }
-
-.dish-detail-action {
-  display: flex;
-  justify-content: center;
-}
-
 /* 添加加载样式 */
 .loading-container {
   display: flex;
@@ -288,7 +286,7 @@
 }
 
 .user-info-card::after {
-  content: '';
+  content: "";
   position: absolute;
   right: 20rpx;
   top: 50%;

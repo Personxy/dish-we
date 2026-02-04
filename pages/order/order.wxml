@@ -46,7 +46,9 @@
       <block wx:else>
         <view class="empty-state" wx:if="{{!hasToken}}">
           <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
-          <t-button theme="primary" size="medium" class="go-login-btn" bindtap="goToLogin">去登录</t-button>
+          <t-button theme="primary" size="medium" class="go-login-btn" bindtap="goToLogin">
+            去登录
+          </t-button>
         </view>
         <view class="empty-state" wx:else>
           <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
@@ -62,10 +64,6 @@
         <image class="cart-icon" src="/images/menu.png" mode="aspectFit"></image>
         <view class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
       </view>
-      <!-- <view class="cart-price">
-        <text>合计: </text>
-        <text class="price">¥{{totalPrice}}</text>
-      </view> -->
     </view>
     <view class="checkout-btn {{cartCount > 0 ? 'btn-active' : ''}}" bindtap="checkout">
       去制作 ({{cartCount}})
@@ -79,7 +77,6 @@
       <view class="dish-detail-info">
         <view class="dish-detail-name">{{currentDish.name}}</view>
         <view class="dish-detail-desc">{{currentDish.description}}</view>
-        <!-- <view class="dish-detail-price">¥{{currentDish.price}}</view> -->
         <view class="dish-detail-action">
           <view class="counter">
             <view class="counter-btn minus {{currentDishCount > 0 ? 'active' : ''}}" catchtap="decreaseDishCount">
@@ -88,7 +85,9 @@
             <view class="counter-number">{{currentDishCount}}</view>
             <view class="counter-btn plus" catchtap="increaseDishCount">+</view>
           </view>
-          <t-button theme="primary" size="large" class="add-to-cart-btn" bindtap="confirmAddToCart">加入菜单</t-button>
+          <t-button theme="primary" size="large" class="add-to-cart-btn" bindtap="confirmAddToCart">
+            加入菜单
+          </t-button>
         </view>
       </view>
     </view>

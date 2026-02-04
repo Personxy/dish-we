@@ -140,7 +140,7 @@ Page({
     const d = new Date(value);
     const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
     const txt = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(
-      d.getMinutes()
+      d.getMinutes(),
     )}:${pad(d.getSeconds())}`;
     this.setData({
       [mode]: value,
@@ -201,7 +201,6 @@ Page({
     const items = this.data.cartItems.map((item) => ({
       dish: item.id, // 菜品ID
       quantity: item.count, // 数量
-      price: 1, // 价格默认设置为1
     }));
 
     // 处理预约时间（使用 datetime 时间戳）

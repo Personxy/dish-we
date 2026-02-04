@@ -63,12 +63,6 @@
   color: var(--gray-6);
 }
 
-.cart-item-price {
-  font-size: 30rpx;
-  color: #ff6b00;
-  font-weight: 500;
-}
-
 .cart-item-counter {
   display: flex;
   align-items: center;
@@ -124,12 +118,7 @@
 }
 
 /* 订单信息 */
-.order-info-section, .price-detail-section {
-  background-color: #fff;
-  margin-bottom: 20rpx;
-  padding: 30rpx;
-}
-
+.order-info-section,
 .section-title {
   font-size: 32rpx;
   font-weight: 600;
@@ -183,28 +172,6 @@
   color: var(--gray-4);
 }
 
-/* 价格详情 */
-.price-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20rpx;
-  font-size: 28rpx;
-  color: var(--gray-5);
-}
-
-.price-item.total {
-  padding-top: 20rpx;
-  border-top: 1rpx solid #f0f0f0;
-  font-size: 32rpx;
-  color: var(--gray-6);
-  font-weight: 500;
-}
-
-.total-price {
-  color: #ff6b00;
-  font-weight: 600;
-}
-
 /* 底部结算栏 */
 .bottom-bar {
   position: fixed;
@@ -236,4 +203,4 @@
   border-radius: 40rpx;
   font-size: 30rpx;
   font-weight: 500;
-} 
+}

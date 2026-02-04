@@ -11,7 +11,6 @@
           <image class="cart-item-image" src="{{item.image.url}}" mode="aspectFill" bindtap="previewCartImage" data-url="{{item.image.url}}"></image>
           <view class="cart-item-info">
             <view class="cart-item-name">{{item.name}}</view>
-            <!-- <view class="cart-item-price">¥{{item.price}}</view> -->
           </view>
           <view class="cart-item-counter">
             <view class="counter-btn minus {{item.count > 1 ? 'active' : ''}}" catchtap="decreaseItemCount" data-id="{{item.id}}">
@@ -29,7 +28,9 @@
     <view class="empty-cart" wx:else>
       <image class="empty-cart-image" src="/images/empty-cart.png" mode="aspectFit"></image>
       <view class="empty-cart-text">计划是空的</view>
-      <t-button theme="primary" size="medium" class="go-order-btn" bindtap="goToOrder">去添加</t-button>
+      <t-button theme="primary" size="medium" class="go-order-btn" bindtap="goToOrder">
+        去添加
+      </t-button>
     </view>
   </view>
   <!-- 订单信息 -->
@@ -38,25 +39,8 @@
     <!-- 预约时间选择 -->
     <view class="info-item">
       <view class="info-label">制作时间</view>
-      <t-cell 
-        title="制作时间" 
-        hover 
-        note="{{datetimeText || '立即烹饪'}}" 
-        arrow 
-        data-mode="datetime" 
-        bindtap="showPicker" 
-        t-class="panel-item" 
-        />
-      <t-date-time-picker 
-        title="制作时间" 
-        visible="{{datetimeVisible}}" 
-        mode="second" 
-        value="{{datetime}}" 
-        format="YYYY-MM-DD HH:mm:ss" 
-        bindchange="onConfirm" 
-        bindpick="onColumnChange" 
-        bindcancel="hidePicker" 
-        />
+      <t-cell title="制作时间" hover note="{{datetimeText || '立即烹饪'}}" arrow data-mode="datetime" bindtap="showPicker" t-class="panel-item" />
+      <t-date-time-picker title="制作时间" visible="{{datetimeVisible}}" mode="second" value="{{datetime}}" format="YYYY-MM-DD HH:mm:ss" bindchange="onConfirm" bindpick="onColumnChange" bindcancel="hidePicker" />
     </view>
     <!-- 备注输入 -->
     <view class="info-item">
@@ -67,13 +51,9 @@
       </view>
     </view>
   </view>
- 
   <!-- 底部结算栏 -->
   <view class="bottom-bar" wx:if="{{cartItems.length > 0}}">
-    <view class="total-info">
-      <!-- <text>合计: </text>
-      <text class="total-price">{{totalAmount}}</text> -->
-    </view>
+    <view class="total-info"></view>
     <view class="submit-btn" bindtap="submitOrder">开始制作</view>
   </view>
 </view>

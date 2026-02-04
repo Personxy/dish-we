@@ -42,7 +42,6 @@ Page({
       // 菜品表单数据
       name: "",
       categoryId: "",
-      price: "",
       image: "",
       description: "",
       difficulty: 1,
@@ -129,7 +128,6 @@ Page({
         name: dish.name || "",
         categoryId: dish.category._id || "", // 兼容两种字段名
         categoryName: dish.category.name, // 添加分类名称
-        price: dish.price || "",
         image: dish.image.url || "",
         description: dish.description || "",
         difficulty: dish.difficulty || 1,
@@ -414,35 +412,6 @@ Page({
     });
   },
 
-  // 价格输入
-  // onPriceInput: function (e) {
-  //   let price = e.detail.value;
-
-  //   // 限制只能输入数字和小数点
-  //   price = price.replace(/[^\d.]/g, "");
-
-  //   // 限制只能有一个小数点
-  //   if (price.split(".").length > 2) {
-  //     price = price.split(".")[0] + "." + price.split(".").slice(1).join("");
-  //   }
-
-  //   // 限制小数点后最多两位
-  //   if (price.indexOf(".") > -1) {
-  //     const integer = price.split(".")[0];
-  //     let decimal = price.split(".")[1];
-
-  //     if (decimal.length > 2) {
-  //       decimal = decimal.substring(0, 2);
-  //     }
-
-  //     price = integer + "." + decimal;
-  //   }
-
-  //   this.setData({
-  //     "dishForm.price": price,
-  //   });
-  // },
-
   // 描述输入
   onDescriptionInput: function (e) {
     const description = e.detail.value;
@@ -649,7 +618,7 @@ Page({
       difficulty: this.data.dishForm.difficulty,
       ingredients: this.data.dishForm.ingredients || [],
       category: dishForm.categoryId, // 使用 category 字段
-      // price: parseFloat(dishForm.price),
+
       description: dishForm.description,
       image: {
         url: dishForm.image, // 已上传的图片URL
@@ -720,23 +689,6 @@ Page({
       });
       return false;
     }
-
-    // if (!dishForm.price) {
-    //   wx.showToast({
-    //     title: "请输入菜品价格",
-    //     icon: "none",
-    //   });
-    //   return false;
-    // }
-
-    // 价格必须大于0
-    // if (parseFloat(dishForm.price) <= 0) {
-    //   wx.showToast({
-    //     title: "价格必须大于0",
-    //     icon: "none",
-    //   });
-    //   return false;
-    // }
 
     return true;
   },

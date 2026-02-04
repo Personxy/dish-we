@@ -15,7 +15,7 @@ Page({
     currentPage: 1,
     hasMore: true,
     cartCount: 0,
-    // totalPrice: 0,
+
     showDishDetail: false,
     currentDish: {},
     currentDishCount: 1,
@@ -180,7 +180,7 @@ Page({
             id: dish._id, // 确保id字段一致
             categoryId: dish.category._id, // 确保categoryId字段一致
             image: dish.image, // 图片URL
-            price: dish.price,
+
             name: dish.name,
             description: dish.description,
           }));
@@ -367,7 +367,6 @@ Page({
 
     this.setData({
       cartCount: cartItems.length,
-      // totalPrice: total.toFixed(2),
     });
   },
 

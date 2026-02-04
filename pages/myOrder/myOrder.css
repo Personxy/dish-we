@@ -150,7 +150,7 @@
 .order-list .order-card .movable-area .movable-view .order-content .order-footer .order-total {
   font-size: 28rpx;
 }
-.order-list .order-card .movable-area .movable-view .order-content .order-footer .order-total .price {
+.order-list .order-card .movable-area .movable-view .order-content .order-footer .order-total {
   color: #ff6b00;
   font-weight: 600;
 }
@@ -288,38 +288,69 @@
 .order-detail-modal .order-detail-content .detail-scroll .detail-items .detail-item-list .detail-item-card:last-child {
   border-bottom: none;
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-items .detail-item-list .detail-item-card .detail-item-image {
+.order-detail-modal
+  .order-detail-content
+  .detail-scroll
+  .detail-items
+  .detail-item-list
+  .detail-item-card
+  .detail-item-image {
   width: 120rpx;
   height: 120rpx;
   border-radius: 8rpx;
   margin-right: 20rpx;
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-items .detail-item-list .detail-item-card .detail-item-info {
+.order-detail-modal
+  .order-detail-content
+  .detail-scroll
+  .detail-items
+  .detail-item-list
+  .detail-item-card
+  .detail-item-info {
   flex: 1;
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-items .detail-item-list .detail-item-card .detail-item-info .detail-item-name {
+.order-detail-modal
+  .order-detail-content
+  .detail-scroll
+  .detail-items
+  .detail-item-list
+  .detail-item-card
+  .detail-item-info
+  .detail-item-name {
   font-size: 28rpx;
   font-weight: 500;
   margin-bottom: 10rpx;
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-items .detail-item-list .detail-item-card .detail-item-info .detail-item-price {
+.order-detail-modal
+  .order-detail-content
+  .detail-scroll
+  .detail-items
+  .detail-item-list
+  .detail-item-card
+  .detail-item-info {
   font-size: 26rpx;
   color: var(--gray-5);
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-items .detail-item-list .detail-item-card .detail-item-total {
+.order-detail-modal
+  .order-detail-content
+  .detail-scroll
+  .detail-items
+  .detail-item-list
+  .detail-item-card
+  .detail-item-total {
   font-size: 28rpx;
   color: #ff6b00;
   font-weight: 500;
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-price {
+.order-detail-modal .order-detail-content .detail-scroll {
   margin-bottom: 30rpx;
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-price .detail-price-list {
+.order-detail-modal .order-detail-content .detail-scroll {
   background-color: #f9f9f9;
   border-radius: 12rpx;
   padding: 20rpx;
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-price .detail-price-list .detail-price-item {
+.order-detail-modal .order-detail-content .detail-scroll {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -327,14 +358,14 @@
   font-size: 28rpx;
   color: var(--gray-5);
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-price .detail-price-list .detail-price-item.total {
+.order-detail-modal .order-detail-content .detail-scroll {
   padding-top: 16rpx;
   border-top: 1rpx solid #f0f0f0;
   font-size: 30rpx;
   color: var(--gray-6);
   font-weight: 500;
 }
-.order-detail-modal .order-detail-content .detail-scroll .detail-price .detail-price-list .detail-price-item.total .total-price {
+.order-detail-modal .order-detail-content .detail-scroll {
   color: #ff6b00;
   font-weight: 600;
 }

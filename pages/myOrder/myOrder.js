@@ -492,7 +492,6 @@ Page({
       app.globalData.cartItems.push({
         id: item.dish, // 使用菜品ID
         name: item.name,
-        price: item.price,
         count: item.quantity,
         image: item.image,
       });
