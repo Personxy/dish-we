@@ -60,6 +60,7 @@
     "include": []
   },
   "appid": "wxc5c6eef50aa07409",
-  "libVersion": "3.8.2",
-  "simulatorPluginLibVersion": {}
+  "libVersion": "3.14.1",
+  "simulatorPluginLibVersion": {},
+  "projectname": "%E7%82%B9%E9%A4%90%E5%B0%8F%E7%A8%8B%E5%BA%8F"
 }
