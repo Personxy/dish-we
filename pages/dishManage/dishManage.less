@@ -24,9 +24,11 @@
 
 // 主容器样式
 .manage-container {
-  min-height: 100vh;
+  height: 100vh;
   background-color: #f5f5f5;
-  padding-bottom: 30rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 // 标签栏样式
@@ -34,9 +36,7 @@
   display: flex;
   background-color: #fff;
   border-bottom: 1px solid @gray-3;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  flex-shrink: 0;
   
   .tab {
     flex: 1;
@@ -66,12 +66,21 @@
   }
 }
 
+.category-manage,
+.dish-manage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 // 管理头部样式
 .manage-header {
   .flex-between();
   padding: 30rpx;
   background-color: #fff;
   margin-bottom: 20rpx;
+  flex-shrink: 0;
   
   .title {
     font-size: 32rpx;
@@ -191,8 +200,12 @@
 }
 
 // 菜品列表样式
+.category-list,
 .dish-list {
-  height: calc(100vh - 250rpx);
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  padding-bottom: 30rpx;
 }
 
 .dish-item {
@@ -275,8 +288,8 @@
 }
 
 .btn-outline.edit {
-  border-color: #07c160;
-  color: #07c160;
+  border-color: var(--primary-color);
+
 }
 
 .btn-outline.delete {

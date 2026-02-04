@@ -89,7 +89,7 @@
   </view>
   <!-- 底部按钮 -->
   <view class="bottom-btns">
-    <view class="btn btn-outline" bindtap="cancel">取消</view>
-    <view class="btn btn-primary" bindtap="saveDish">保存</view>
+    <view class="btn btn-outline " bindtap="cancel">取消</view>
+    <view class="btn btn-primary " bindtap="saveDish">保存</view>
   </view>
 </view>

@@ -23,25 +23,27 @@
       </view>
     </view>
     <!-- 使用拖拽排序组件 -->
-    <drag-sort wx:if="{{categories.length > 0}}" list="{{categories}}" sorting="{{isSorting}}" bind:sort="onCategorySort" bind:itemtap="onCategoryTap" useSlot="{{true}}">
-      <block wx:for="{{categories}}" wx:key="id">
-        <view slot="item-{{index}}" class="category-item">
-          <view class="category-info">
-            <view class="category-name">{{item.name}}</view>
-            <view class="category-count">{{item.dishCount || 0}}个菜品</view>
-          </view>
-          <view class="category-actions">
-            <view class="drag-handle" wx:if="{{isSorting}}">≡</view>
-            <view class="action-btn btn-small btn-outline edit" bindtap="editCategory" data-category="{{item}}" wx:if="{{!isSorting}}">
-              编辑
+    <scroll-view class="category-list" scroll-y="{{!isSorting}}" wx:if="{{categories.length > 0}}">
+      <drag-sort list="{{categories}}" sorting="{{isSorting}}" bind:sort="onCategorySort" bind:itemtap="onCategoryTap" useSlot="{{true}}">
+        <block wx:for="{{categories}}" wx:key="id">
+          <view slot="item-{{index}}" class="category-item">
+            <view class="category-info">
+              <view class="category-name">{{item.name}}</view>
+              <view class="category-count">{{item.dishCount || 0}}个菜品</view>
             </view>
-            <view class="action-btn btn-small btn-outline delete" bindtap="deleteCategory" data-id="{{item.id}}" wx:if="{{!isSorting}}">
-              删除
+            <view class="category-actions">
+              <view class="drag-handle" wx:if="{{isSorting}}">≡</view>
+              <view class="action-btn btn-small btn-outline edit" bindtap="editCategory" data-category="{{item}}" wx:if="{{!isSorting}}">
+                编辑
+              </view>
+              <view class="action-btn btn-small btn-outline delete" bindtap="deleteCategory" data-id="{{item.id}}" wx:if="{{!isSorting}}">
+                删除
+              </view>
             </view>
           </view>
-        </view>
-      </block>
-    </drag-sort>
+        </block>
+      </drag-sort>
+    </scroll-view>
     <!-- 空状态 -->
     <view class="empty-state" wx:else>
       <image class="empty-icon" src="/images/empty-category.png" mode="aspectFit"></image>
@@ -71,7 +73,7 @@
         <image class="dish-image" src="{{item.image.url}}" mode="aspectFill"></image>
         <view class="dish-info">
           <view class="dish-name">{{item.name}}</view>
-          <view class="dish-category">{{getCategoryName(item.categoryId)}}</view>
+          <view class="dish-category">{{item.categoryName || '未分类'}}</view>
           <view class="dish-description text-ellipsis">{{item.description || '暂无描述'}}</view>
         </view>
         <view class="dish-actions">

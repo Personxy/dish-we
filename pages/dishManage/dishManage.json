@@ -3,7 +3,8 @@
   "navigationBarTextStyle": "white",
   "navigationBarBackgroundColor": "#007AFF",
   "backgroundTextStyle": "light",
-  "enablePullDownRefresh": true,
+  "disableScroll": true,
+  "enablePullDownRefresh": false,
   "usingComponents": {
     "drag-sort": "/components/drag-sort/drag-sort"
   }

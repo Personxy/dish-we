@@ -5,6 +5,7 @@ Page({
   data: {
     currentTab: "category", // 当前标签页：category-分类管理、dish-菜品管理
     categories: [], // 分类列表
+    categoryMap: {}, // 分类id到名称的映射
     dishes: [], // 菜品列表
     filteredDishes: [], // 筛选后的菜品列表
     categoryIndex: 0, // 分类筛选的索引
@@ -58,24 +59,27 @@ Page({
       .getCategories()
       .then((res) => {
         if (res.success) {
-          const categories = res.data || [];
+          const rawCategories = res.data || [];
+          const processedCategories = rawCategories.map((category) => ({
+            ...category,
+            id: category._id,
+            dishCount: Number(category.dishCount || 0),
+          }));
 
-          // 更新全局数据
-          app.globalData.categories = categories;
+          const categoryMap = processedCategories.reduce((acc, category) => {
+            acc[category.id] = category.name;
+            return acc;
+          }, {});
+
+          app.globalData.categories = processedCategories;
 
           // 生成分类名称列表：用于筛选菜品
-          const categoryNames = ["全部分类"].concat(categories.map((item) => item.name));
-          console.log("分类数据", categories);
-          // 先设置基本分类数据
+          const categoryNames = ["全部分类"].concat(processedCategories.map((item) => item.name));
           this.setData({
-            categories: categories.map((category) => ({
-              ...category,
-              id: category._id, // 确保 id 字段一致
-              dishCount: Number(category.dishCount || 0), // 确保 dishCount 是数字类型
-            })),
+            categories: processedCategories,
+            categoryMap,
             categoryNames,
           });
-          console.log(this.data.categories);
           // 加载菜品数据后再更新菜品数量
           this.loadDishes();
         }
@@ -162,13 +166,26 @@ Page({
         if (res.success) {
           const dishesData = res.data || [];
           const pagination = res.pagination || {};
+          const categoryMap = this.data.categoryMap || {};
 
           // 处理菜品数据，确保字段一致性
-          const processedDishes = dishesData.map((dish) => ({
-            ...dish,
-            id: dish._id, // 确保id字段一致
-            categoryId: dish.category, // 确保categoryId字段一致
-          }));
+          const processedDishes = dishesData.map((dish) => {
+            const rawCategory = dish.category;
+            const normalizedCategoryId =
+              typeof rawCategory === "string" ? rawCategory : rawCategory?._id || rawCategory?.id || "";
+
+            const categoryName =
+              categoryMap[normalizedCategoryId] ||
+              (typeof rawCategory === "object" ? rawCategory?.name : "") ||
+              "未分类";
+
+            return {
+              ...dish,
+              id: dish._id,
+              categoryId: normalizedCategoryId,
+              categoryName,
+            };
+          });
 
           // 更新全局数据
           if (!isLoadMore) {
@@ -241,12 +258,6 @@ Page({
       hasMore: true,
     });
     this.loadDishes();
-  },
-
-  // 获取分类名称
-  getCategoryName: function (categoryId) {
-    const category = this.data.categories.find((item) => item.id === categoryId);
-    return category ? category.name : "未分类";
   },
 
   // 显示添加分类弹窗

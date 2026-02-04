@@ -9,7 +9,7 @@
     "minified": true,
     "newFeature": false,
     "coverView": true,
-    "nodeModules": false,
+    "nodeModules": true,
     "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
     "scopeDataCheck": false,
@@ -28,7 +28,7 @@
     "enableEngineNative": false,
     "useIsolateContext": true,
     "userConfirmedBundleSwitch": false,
-    "packNpmManually": true,
+    "packNpmManually": false,
     "packNpmRelationList": [
       {
         "packageJsonPath": "package.json",
@@ -37,7 +37,7 @@
     ],
     "minifyWXSS": true,
     "showES6CompileOption": false,
-    "ignoreUploadUnusedFiles": true,
+    "ignoreUploadUnusedFiles": false,
     "useCompilerPlugins": [
       "less"
     ],

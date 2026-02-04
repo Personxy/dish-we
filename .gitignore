@@ -19,3 +19,4 @@ build/
 *.swo
 .env
 .env.*
+package-lock.json
